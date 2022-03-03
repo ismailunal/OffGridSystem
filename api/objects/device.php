@@ -10,9 +10,11 @@ class Device
     public $watt;
     public $hour;
     public $day;
-    public $costwatt;
-    public $invertedwatt;
-    public $requiredamper;
+    public $wattrequired;
+    public $capacity;
+    public $amper;
+    public $solarp;
+    public $panelcount;
     public $userid;
 
     public function __construct($db)
@@ -55,9 +57,11 @@ class Device
             watt = :watt,
             hour = :hour,
             day = :day,
-            costwatt = :costwatt,
-            invertedwatt = :invertedwatt,
-            requiredamper=:requiredamper,
+            wattrequired = :wattrequired,
+            capacity = :capacity,
+            amper=:amper,
+            solarp = :solarp,
+            panelcount=:panelcount,
             userid=:userid";
 
         $stmt = $this->conn->prepare($query);
@@ -67,10 +71,12 @@ class Device
         $this->watt = htmlspecialchars(strip_tags($this->watt));
         $this->hour = htmlspecialchars(strip_tags($this->hour));
         $this->day = htmlspecialchars(strip_tags($this->day));
-        $this->costwatt = htmlspecialchars(strip_tags($this->costwatt));
-        $this->invertedwatt = htmlspecialchars(strip_tags($this->invertedwatt));
-        $this->requiredamper = htmlspecialchars(strip_tags($this->requiredamper));
-        //$this->userid = htmlspecialchars(strip_tags($this->userid));    
+        $this->wattrequired = htmlspecialchars(strip_tags($this->wattrequired));
+        $this->capacity = htmlspecialchars(strip_tags($this->capacity));
+        $this->amper = htmlspecialchars(strip_tags($this->amper));
+        $this->solarp = htmlspecialchars(strip_tags($this->solarp));
+        $this->panelcount = htmlspecialchars(strip_tags($this->panelcount));
+        $this->userid = htmlspecialchars(strip_tags($this->userid));    
 
         // bind the values
         $stmt->bindParam(':name', $this->name);
@@ -78,9 +84,11 @@ class Device
         $stmt->bindParam(':watt', $this->watt);
         $stmt->bindParam(':hour', $this->hour);
         $stmt->bindParam(':day', $this->day);
-        $stmt->bindParam(':costwatt', $this->costwatt);
-        $stmt->bindParam(':invertedwatt', $this->invertedwatt);
-        $stmt->bindParam(':requiredamper', $this->requiredamper);
+        $stmt->bindParam(':wattrequired', $this->wattrequired);
+        $stmt->bindParam(':capacity', $this->capacity);
+        $stmt->bindParam(':amper', $this->amper);
+        $stmt->bindParam(':solarp', $this->solarp);
+        $stmt->bindParam(':panelcount', $this->panelcount);
         $stmt->bindParam(':userid', $this->userid,PDO::PARAM_INT);
         if ($stmt->execute()) {
             return true;

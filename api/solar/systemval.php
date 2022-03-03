@@ -7,12 +7,12 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
  
 // files needed to connect to database
-include_once 'api/config/database.php';
-include_once 'api/objects/device.php';
-include_once 'api/objects/customer.php';
-include_once 'api/objects/solar.php';
-include_once 'calculator.php';
-$content = file_get_contents("index.php");
+include_once '../config/database.php';
+include_once '../objects/solar.php';
+include_once '../config/calculator.php';
+include_once '../objects/customer.php';
+include_once '../objects/device.php';
+$content = file_get_contents("../../index.php");
 $pattern= '/<h[5-6].*?>(.*)<\/h[5-6]>/i';
 preg_match_all($pattern,$content,$matches);
 //-----------------
@@ -40,24 +40,12 @@ if(!empty($autonomyday)&&!empty($season)&&
    $customer->season = $season;
    $customer->created = date("Y-m-d h:i:sa");
 }
-// create the customer
+// create the device and system
 if($customer->create()){
- 
-  // set response code
   http_response_code(201);
-
-  // display message: customer was created
-  //echo json_encode(array("message" => "customer was created."));
 }
-
-// message if unable to create customer
 else{
-
-  // set response code
   http_response_code(400);
-
-  // display message: unable to create customer
- // echo json_encode(array("message" => "Unable to create customer."));
 }
 //-----------------------------------------------------------------------------------------------------------
 $device = new Device($db);
@@ -66,24 +54,9 @@ $watts=$_POST['wattd'];
 $hours=$_POST['hourd'];
 $days=$_POST['dayd'];
 $devices=array();
-
 array_push($devices,$numbers,$watts,$hours,$days);
-
 $solar =new Solar($db);
-//print_r($devices);
-//  0->numbers
-//  1->watts
-//  2->hours
-//  3->days
-// must go [0][0] [1][0] [2][0] [3][0] [0][1] [1][1] [2][1] [3][1] [0][2] [1][2] [2][2]
-
-// foreach($devices as $key){
-//     echo "\n";
-//     foreach($key as $subkey){
-//         echo $subkey ;
-//     }
-// }
-//echo count($devices);
+// [0][0] [1][0] [2][0] [3][0] [0][1] [1][1] [2][1] [3][1] [0][2] [1][2] [2][2]
 $stmt=$device->selectuserid();
 $num = $stmt->rowCount();
 // check if more than 0 record found
@@ -91,12 +64,8 @@ if($num>0){
   $maxrow = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 $max = $maxrow['id'];
-//$max++;
 for($i=0;$i<count($devices[0]);$i++){
-   // for($j=0;$j<count($devices);$j++){
-     //   echo $devices[$j][$i] . "-----------";
      $j=0;
-   // $device->name = $devices[$j][$i];
    $device->amount = $devices[$j][$i];
    if($device->amount>0){
     $device->name=$matches[1][$i];
@@ -110,69 +79,36 @@ for($i=0;$i<count($devices[0]);$i++){
     $invertedparam=Calculator::cal_inverted($costwattparam);
     $solar->wattinverted+=$invertedparam;
     $requiredparam=Calculator::cal_requiredtotalwatt($invertedparam,$customer->autonomyday);
+    $device->wattrequired=$requiredparam;
     $solar->wattrequired+=$requiredparam;
     $capacityparam=$requiredparam/0.6;
+    $device->capacity=$capacityparam;
     $solar->capacity+=$capacityparam;
     $amperparam=$capacityparam/24;       //24 ile bölündü 12 ve 48 ihtimalleri var
+    $device->amper=$amperparam;
     $solar->amper+=$amperparam;
+    $device->solarp=$invertedparam/5/0.7;
     $solar->solarp+=$invertedparam/5/0.7;
     $countparam=$capacityparam/(5*330); //içerideki 330 değeri deşiştirilebilir olmalı
+    $device->panelcount=$countparam;
     $solar->panelcount+=$countparam;
-    // $device->costwatt=Calculator::cal_costw($device->amount,$device->watt,(float)$device->hour,$device->day);
-    // $device->invertedwatt=Calculator::cal_inverted($device->costwatt);
-    //$device->requiredamper=Calculator::;
-    // echo $device->amount;
-    // echo $device->watt;
-    // echo $device->hour;
-    // echo $device->day;
-    // echo "\n" .$device->userid;
- //}
- 
-// create the device
 if($device->create()){
- 
-    // set response code
     http_response_code(201);
- 
-    // display message: device was created
-    //echo json_encode(array("message" => "device was created."));
 }
- 
-// message if unable to create device
 else{
- 
-    // set response code
     http_response_code(400);
- 
-    // display message: unable to create device
-    //echo json_encode(array("message" => "Unable to create device."));
-
     }
 }
 }
 $solar->userid=$max;
 if($solar->create()){
- 
-  // set response code
   http_response_code(201);
-
-  // display message: device was created
-  //echo json_encode(array("message" => "device was created."));
 }
-
-// message if unable to create device
 else{
-
-  // set response code
   http_response_code(400);
-
-  // display message: unable to create device
-  //echo json_encode(array("message" => "Unable to create device."));
-
   }
-  //print_r($device->readByName("Klima")) ;
   //----------------------------------------READ-----------------------------------------
-  $stmt = $device->readByName("Klima");
+ // $stmt = $device->readByName("Klima");
   $num = $stmt->rowCount();
   // check if more than 0 record found
   if($num>0){
@@ -205,27 +141,18 @@ else{
     
           array_push($devices_arr["records"], $device_item);
       }
-    
-      // set response code - 200 OK
       http_response_code(200);
-    
-      // show devicess data in json format
-      echo json_encode($devices_arr);
+     // echo json_encode($devices_arr);
   }
     
   else{
-    
-      // set response code - 404 Not found
       http_response_code(404);
-    
-      // tell the user no devices found
       echo json_encode(
           array("message" => "No devices found.")
       );
     }
 
    // --------------------------------------READ WITH CUSTOMER----------------------------------------
-   $stmt = $solar->readWithCustomer('Mustafa');
    $num = $stmt->rowCount();
    if($num>0){
        $devices_arr=array("records" =>array());
@@ -242,7 +169,7 @@ else{
            array_push($devices_arr["records"], $device_item);
        }
        http_response_code(200);
-       echo json_encode($devices_arr);
+      // echo json_encode($devices_arr);
    }
      
    else{
@@ -251,4 +178,5 @@ else{
            array("message" => "No devices found.")
        );
      }
+    // header('location: https://heromuhendislik.com/');
 ?>

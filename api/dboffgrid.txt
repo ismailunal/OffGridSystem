@@ -1,0 +1,50 @@
+CREATE TABLE IF NOT EXISTS `customers` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name`  text NOT NULL,
+  `email` text NOT NULL,
+  `phone` text NOT NULL,
+  `location` text,
+  `information` text,
+`autonomyday` int,
+`season` int,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+--------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `devices` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name`  text,
+  `amount` decimal,
+  `watt` decimal,
+  `hour` decimal,
+  `day` decimal,
+  `wattrequired` decimal(8,5),
+  `capacity` decimal(8,5),
+  `amper` decimal(8,5),
+  `solarp` decimal(8,5),
+  `panelcount` decimal(4,2),
+  `userid` int NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX (userid),
+    FOREIGN KEY (userid)
+        REFERENCES customers(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+---------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `solars` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userid`  int NOT NULL,
+  `connected` decimal,
+  `watthour` decimal(8,5),
+  `wattinverted` decimal(8,5),
+  `wattrequired` decimal(8,5),
+  `capacity` decimal(8,5),
+  `amper` decimal(8,5),
+  `solarp` decimal(8,5),
+  `panelcount` decimal(4,2),
+  PRIMARY KEY (`id`),
+  INDEX (userid),
+    FOREIGN KEY (userid)
+        REFERENCES customers(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

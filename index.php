@@ -39,7 +39,7 @@
     </nav>
     <h3 class="p-2 bg-warning border" id="descr">Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum</h3>
     <div class="container">
-        <form action="test.php" method="POST" id="offgridform" class="form-horizontal" role="form">
+        <form action="api/solar/systemval.php" method="POST" id="offgridform" class="form-horizontal" role="form">
             <h3 class="p-2 bg-light border" id="products1">Beyaz Eşya</h3>
             <!-----------------------------------AIR COND..................---------------->
             <div class="form-row align-items-center">

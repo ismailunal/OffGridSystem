@@ -35,17 +35,6 @@ class Solar
         return $stmt;
     }
 
-    function readWithCustomer($name)
-    {
-        $query = "SELECT
-         c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount 
-    FROM
-        " . $this->table_name . " s," . $this->table_name2 . " c WHERE c.name=? AND c.id=s.userid" . "" ;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$name]);
-        return $stmt;
-    }
-    
     function create()
     {
         $query = "INSERT INTO " . $this->table_name . "
@@ -69,11 +58,11 @@ class Solar
         $this->wattrequired = htmlspecialchars(strip_tags($this->wattrequired));
         $this->capacity = htmlspecialchars(strip_tags($this->capacity));
         $this->amper = htmlspecialchars(strip_tags($this->amper));
-        $this->solarp = htmlspecialchars(strip_tags($this->solarp));    
-        $this->panelcount = htmlspecialchars(strip_tags($this->panelcount)); 
+        $this->solarp = htmlspecialchars(strip_tags($this->solarp));
+        $this->panelcount = htmlspecialchars(strip_tags($this->panelcount));
 
         // bind the values
-        $stmt->bindParam(':userid', $this->userid,PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $stmt->bindParam(':connected', $this->connected);
         $stmt->bindParam(':watthour', $this->watthour);
         $stmt->bindParam(':wattinverted', $this->wattinverted);
@@ -88,8 +77,9 @@ class Solar
 
         return false;
     }
-    function selectuserid(){
-        $query= "SELECT id FROM customers ORDER BY id DESC LIMIT 1";    
+    function selectuserid()
+    {
+        $query = "SELECT id FROM customers ORDER BY id DESC LIMIT 1";
         $stmt = $this->conn->prepare($query);
         // execute query
         $stmt->execute();
