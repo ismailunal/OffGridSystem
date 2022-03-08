@@ -27,6 +27,7 @@ $information=$_POST['information'];
 $username=$_POST['username'];
 $email=$_POST['email'];
 $phone=$_POST['phone'];
+
 if(!empty($autonomyday)&&!empty($season)&&
 !empty($username)&&!empty($email)&&
 !empty($phone)){
@@ -74,7 +75,7 @@ for($i=0;$i<count($devices[0]);$i++){
     $device->day = $devices[$j+3][$i];  
     $device->userid= $max;
     (float)$solar->connected+=(float)$device->watt*(float)$device->amount;
-    $costwattparam=Calculator::cal_costw($device->amount,$device->watt,$device->hour,$device->day);
+    $costwattparam=Calculator::cal_costw($device->amount,(float)$device->watt,(float)$device->hour,$device->day);
     $solar->watthour+=$costwattparam;
     $invertedparam=Calculator::cal_inverted($costwattparam);
     $solar->wattinverted+=$invertedparam;
