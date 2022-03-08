@@ -16,10 +16,16 @@ class Customer{
     public $autonomyday;
     public $season;
     public $created;
- 
     // constructor
     public function __construct($db){
         $this->conn = $db;
+    }
+
+    function checkExistPhone($phone){
+        $query="SELECT * FROM customers where phone=?" . "";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$phone]);
+        return $stmt->rowCount();
     }
     // read products
 function read(){
@@ -91,3 +97,4 @@ function create(){
  
 // emailExists() method will be here
 }
+?>

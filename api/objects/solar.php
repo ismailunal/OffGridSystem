@@ -3,7 +3,6 @@ class Solar
 {
     private $conn;
     private $table_name = "solars";
-    private $table_name2 = "customers";
 
     public $id;
     public $userid;
@@ -86,3 +85,4 @@ class Solar
         return $stmt;
     }
 }
+?>
