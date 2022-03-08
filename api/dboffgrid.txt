@@ -18,33 +18,56 @@ CREATE TABLE IF NOT EXISTS `devices` (
   `watt` decimal,
   `hour` decimal,
   `day` decimal,
-  `wattrequired` decimal(10,5),
-  `capacity` decimal(10,5),
-  `amper` decimal(10,5),
-  `solarp` decimal(10,5),
-  `panelcount` decimal(4,2),
-  `userid` int NOT NULL,
+  `wattrequired` decimal(13,5),
+  `capacity` decimal(13,5),
+  `amper` decimal(13,5),
+  `solarp` decimal(13,5),
+  `panelcount` decimal(6,2),
+  `customerid` int NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX (userid),
-    FOREIGN KEY (userid)
+  INDEX (customerid),
+    FOREIGN KEY (customerid)
         REFERENCES customers(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 ---------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `solars` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `userid`  int NOT NULL,
+  `customerid`  int NOT NULL,
   `connected` decimal,
-  `watthour` decimal(10,5),
-  `wattinverted` decimal(10,5),
-  `wattrequired` decimal(10,5),
-  `capacity` decimal(10,5),
-  `amper` decimal(10,5),
-  `solarp` decimal(10,5),
-  `panelcount` decimal(4,2),
+  `watthour` decimal(13,5),
+  `wattinverted` decimal(13,5),
+  `wattrequired` decimal(13,5),
+  `capacity` decimal(13,5),
+  `amper` decimal(13,5),
+  `solarp` decimal(13,5),
+  `panelcount` decimal(6,2),
   PRIMARY KEY (`id`),
-  INDEX (userid),
-    FOREIGN KEY (userid)
+  INDEX (customerid),
+    FOREIGN KEY (customerid)
         REFERENCES customers(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+---------------------------DELETE RELATIVE DEVICES WHEN CUSTOMER IS DELETED-------------------------------------------------------------
+CREATE TRIGGER after_customers_delete
+ AFTER DELETE ON customers 
+ FOR EACH ROW 
+ delete from devices where devices.customerid=old.id;
+
+
+ ---------------------------------------ALTERNATIVE DELETE TRIGGER----------------------------------------------------------------------------------
+$query = "DELETE devices,customers,solars FROM 
+    devices INNER JOIN customers ON devices.userid=customers.id 
+    INNER JOIN solars ON customers.id=solars.userid 
+    WHERE customers.name=?" . "";
+
+    -----------------------------------------------------------------------------------
+
+    
+(
+  select a.name,a.phone,a.email,a.created from customers a JOIN
+		(
+          select c.name,c.phone,c.email,COUNT(*) as sayı from customers c group by c.name,c.phone HAVING COUNT(*)>5
+        ) b
+ON a.phone=b.phone AND a.email=b.email ORDER by a.created
+);
