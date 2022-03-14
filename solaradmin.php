@@ -10,7 +10,7 @@ include_once 'api/config/calculator.php';
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lorem ipsum sit amet consectetur adipisicing elit. Itaque, voluptatibus numquam ab quidem ducimus ex aliquam voluptatem quas, vero doloremque id consequuntur. Nostrum temporibus non voluptatum debitis commodi et animi.</title>
+    <title>Offgrid Ongrid Solar Panel Sistem Hesaplama Hero Mühendislik</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
@@ -64,7 +64,7 @@ include_once 'api/config/calculator.php';
                                     <button class="btn btn-info" type="submit" name="fphone">Ara</button>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-dark mb-3" name="odate" id="date">Tarihe göre tüm sistemleri sırala</button>
+                            <button type="submit" class="btn btn-dark mb-3" name="odate" id="date">Tarihe Göre Teklifleri Göster</button>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="inname2" placeholder="İsim Giriniz" aria-label="Order by Name" aria-describedby="button-addon2">
                                 <div class="input-group-append">
@@ -113,39 +113,60 @@ include_once 'api/config/calculator.php';
                         $iname3 = $_POST['innamedel'];
                         $solarsystem->deleteUser($iname3);
                     }
-
-
-                    if(isset($_POST['id'])){
-                        echo "sadsad";
+                   else if(isset($_POST['doffer'])){
                         $id= $_POST['id'];
-                      $solarsystem->delete_data_id($id);
+                       $solarsystem->delete_data_id($id);
                     }
 
+                  
+                    if(isset($_POST['soffer'])){
+                     print_r(json_decode($_POST['data'])); 
+                        $solarsystem->ReadDeviceDetail('n');
+                    }
+                    
+                   
                     ?>
 
                 </table>
             </main>
         </div>
     </div>
-
-    <script>
+<!--BUG WARNING dont use .btn-danger class for other button  -->
+    <script type = "text/javascript" language = "javascript">
 $(document).ready(function() {
 	
 	$(document).on("click", ".btn-danger", function() { 
-        var $ele = $(this).parent().parent();
+        var ele = $(this).parent().parent();
 		$.ajax({
-			url: "solarinfo.php",
+			url: "solaradmin.php",
 			type: "POST",
 			cache: false,
 			data:{
 				id: $(this).attr("id")
 			},
 			success: function(){
-                $ele.fadeOut().remove();
+                ele.fadeOut().remove();
 				
 			}
 		});
 	});
+    $(document).on("click", ".btn-warning", function() { 
+        var elname=($(this).parent().parent().children(":first").text());
+        var test=$('#22').text();
+        $.ajax({
+			url: "solaradmin.php",
+			type: "POST",
+			cache: false,
+			data:{
+				asd: test
+			},
+			success: function(){
+                    alert();
+			}
+		});
+    });
+
+    
 });
 </script>
 </body>

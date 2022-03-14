@@ -28,17 +28,21 @@ $username=$_POST['username'];
 $email=$_POST['email'];
 $phone=$_POST['phone'];
 
-if(!empty($autonomyday)&&!empty($season)&&
-!empty($username)&&!empty($email)&&
+if(!empty($username)&&!empty($email)&&
 !empty($phone)){
-   
    $customer->name = $username;
    $customer->email = $email;
    $customer->phone = $phone;
    $customer->location = $coordinate;
    $customer->information = $information;
-   $customer->autonomyday = $autonomyday;
-   $customer->season = $season;
+   if(!empty($autonomyday) && !empty($season)){
+    $customer->autonomyday = $autonomyday;
+    $customer->season = $season;
+   }
+   else{
+    $customer->autonomyday = 1;
+    $customer->season = 1;
+   }
    $customer->created = date("Y-m-d h:i:sa");
 }
 // create the device and system
@@ -58,7 +62,7 @@ $devices=array();
 array_push($devices,$numbers,$watts,$hours,$days);
 $solar =new Solar($db);
 // [0][0] [1][0] [2][0] [3][0] [0][1] [1][1] [2][1] [3][1] [0][2] [1][2] [2][2]
-$stmt=$device->selectuserid();
+$stmt=$device->selectcustomerid();
 $num = $stmt->rowCount();
 // check if more than 0 record found
 if($num>0){
@@ -69,11 +73,14 @@ for($i=0;$i<count($devices[0]);$i++){
      $j=0;
    $device->amount = $devices[$j][$i];
    if($device->amount>0){
-    $device->name=$matches[1][$i];
+     if(isset($matches[1][$i])){
+      $device->name=$matches[1][$i];
+     }
+     else $device->name="Cihaz " . $i;
     $device->watt = $devices[$j+1][$i];
     $device->hour = $devices[$j+2][$i];
     $device->day = $devices[$j+3][$i];  
-    $device->userid= $max;
+    $device->cid= $max;
     (float)$solar->connected+=(float)$device->watt*(float)$device->amount;
     $costwattparam=Calculator::cal_costw($device->amount,(float)$device->watt,(float)$device->hour,$device->day);
     $solar->watthour+=$costwattparam;
@@ -101,7 +108,7 @@ else{
     }
 }
 }
-$solar->userid=$max;
+$solar->cid=$max;
 if($solar->create()){
   http_response_code(201);
 }
@@ -137,7 +144,7 @@ else{
               "costwatt" => $costwatt,
               "invertedwatt" => $invertedwatt,
               "requiredamper" => $requiredamper,
-              "userid" => $userid
+              "cid" => $cid
           );
     
           array_push($devices_arr["records"], $device_item);

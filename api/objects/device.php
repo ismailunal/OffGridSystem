@@ -15,7 +15,7 @@ class Device
     public $amper;
     public $solarp;
     public $panelcount;
-    public $userid;
+    public $cid;
 
     public function __construct($db)
     {
@@ -62,7 +62,7 @@ class Device
             amper=:amper,
             solarp = :solarp,
             panelcount=:panelcount,
-            userid=:userid";
+            cid=:cid";
 
         $stmt = $this->conn->prepare($query);
         // sanitize
@@ -76,7 +76,7 @@ class Device
         $this->amper = htmlspecialchars(strip_tags($this->amper));
         $this->solarp = htmlspecialchars(strip_tags($this->solarp));
         $this->panelcount = htmlspecialchars(strip_tags($this->panelcount));
-        $this->userid = htmlspecialchars(strip_tags($this->userid));    
+        $this->cid = htmlspecialchars(strip_tags($this->cid));    
 
         // bind the values
         $stmt->bindParam(':name', $this->name);
@@ -89,14 +89,14 @@ class Device
         $stmt->bindParam(':amper', $this->amper);
         $stmt->bindParam(':solarp', $this->solarp);
         $stmt->bindParam(':panelcount', $this->panelcount);
-        $stmt->bindParam(':userid', $this->userid,PDO::PARAM_INT);
+        $stmt->bindParam(':cid', $this->cid,PDO::PARAM_INT);
         if ($stmt->execute()) {
             return true;
         }
 
         return false;
     }
-    function selectuserid(){
+    function selectcustomerid(){
         $query= "SELECT id FROM customers ORDER BY id DESC LIMIT 1";    
         $stmt = $this->conn->prepare($query);
         // execute query

@@ -1,12 +1,10 @@
-<?php include ('process.php');
-?>
 <html>
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Solar enerji sistemi hesaplama aracı </title>
+    <title>Offgrid Ongrid Solar Panel Sistem Hesaplama Hero Mühendislik</title>
     <meta name="description" content="Solar enerji hesaplama, elektrik tüketim hesaplama, fotovoltaik enerji hesaplama, Güneş Elektrik Hesaplama" />
     <meta name="keywords" content="Solar enerji hesaplama aracı,fotovoltaik enerji hesaplama, offgrid sistem hesaplama, akü sistemleri, aydınlatma, Güneş Enerjisi hesaplama, solar akü hesaplama, solar enerji hesaplama">
     <meta name="author" content="" />
@@ -37,7 +35,7 @@
             Hero Mühendislik
         </a>
     </nav>
-    <h3 class="p-2 bg-warning border" id="descr">Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum</h3>
+    <h4 class="p-0 bg-success border" id="descr">Teklif Almak İçin Solar Enerji Sistemi Hesaplama Formunu Doldurarak Bize Gönderin</h4>
     <div class="container">
         <form action="api/solar/systemval.php" method="POST" id="offgridform" class="form-horizontal" role="form">
             <h3 class="p-2 bg-light border" id="products1">Beyaz Eşya</h3>
@@ -1645,6 +1643,86 @@
                 </div>
             </div>
             <!---------------------------------------------------------------------------------------------------->
+            <script>
+                var i=0;
+                var html = `
+                <div class="form-row align-items-center">
+                <div class="form-group col-md-2">
+                    <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em">
+                        <use xlink:href="svgs/electricity.svg#Capa_1"></use>
+                    </svg>
+                    <h5 class="fw-bold mb-3" id="wheaterheader">Diğer Cihaz</h5>
+                </div>
+                <div class="form-group col-md-2">
+
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect57">Adet</label>
+                        </div>
+                        <select class="form-control" id="inputGroupSelect57" name="numberd[]">
+                        <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect58">Enerji Sınıfı</label>
+                        </div>
+                        <input class="form-control" type="number" step="0.1" min="0" max="30000" title="En fazla otuz bin watt giriniz." placeholder="0-30000 watt arası değer" name="wattd[]" id="wattwater" />
+                    </div>
+                </div>
+
+                <div class="form-group col-md-3">
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect59">Çalışma Süresi</label>
+                        </div>
+                        <input class="form-control" type="number" step="0.1" min="0" max="24" title="0-24 arası değer giriniz" placeholder="0,0 (Saat)" name="hourd[]" id="hourwheater" />
+                    </div>
+                </div>
+
+                <div class="form-group col-md-2">
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect60">Gün/Hafta</label>
+                        </div>
+                        <select class="form-control" id="inputGroupSelect60" name="dayd[]">
+                        <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                          
+                        </select>
+                    </div>
+                </div>
+            </div>
+     `;
+                $(document).ready(function() {
+                    $("#adddev").click(function() {
+                        $("#contentd").append(html);
+                    });
+                });
+            </script>
+            <div id="contentd">
+
+            </div>
+            <div>
+                 <button type="button" class="btn btn-warning" id="adddev">Listede Olmayan Bir Cihaz Ekle</button>
+    
+            </div>
+           
             <h4 class="p-2 bg-light border">GEREKLİ BİLGİLER</h4>
 
             <!--OTONOMİ SÜRESİ / ENERJİ İHTİYACI DÖNEMİ-->
@@ -1669,8 +1747,8 @@
 
                 </div>
                 <div class="form-group col-md-6">
-                    <span class="help-block ">Biliniyorsa Google Harita Koordinatları</span>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="coordinate"></textarea>
+                    <span class="help-block ">Biliniyorsa Google Harita Koordinatları veya Kısa Adres Bilgisi</span>
+                    <textarea class="form-control" placeholder="39.328402, 26.696481-------sokak/ilçe/il" id="exampleFormControlTextarea1" rows="3" name="coordinate"></textarea>
                 </div>
                 <div class="form-group col-md-6">
                     <span class="help-block ">Varsa diğer belirtmek istediğiniz bilgiler</span>
@@ -1703,8 +1781,7 @@
                         </div>
                         <input type="text" name="phone" class="form-control" placeholder="(500)555555" aria-label="Username" aria-describedby="basic-addon1" required>
                     </div>
-                </div>
-
+                </div>             
             </div>
             <button type="submit" class="btn btn-primary btn-lg btn-block">GÖNDER</button>
 

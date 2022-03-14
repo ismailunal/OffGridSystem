@@ -15,7 +15,7 @@ class Solarsystem
         $query = "SELECT
         c.name,c.phone,c.email,s.connected,s.amper,s.solarp,s.panelcount 
    FROM
-       " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.name like ? AND c.id=s.userid" . "";
+       " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.name like ? AND c.id=s.cid" . "";
         $stmt = $this->conn->prepare($query);
         $name = "%$name%";
         $stmt->execute([$name]);
@@ -72,7 +72,7 @@ class Solarsystem
         $query = "SELECT
         c.name,c.phone,c.email,s.connected,s.amper,s.solarp,s.panelcount 
    FROM
-       " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.phone like ? AND c.id=s.userid" . "";
+       " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.phone like ? AND c.id=s.cid" . "";
         $stmt = $this->conn->prepare($query);
         $phone = "%$number%";
         $stmt->execute([$phone]);
@@ -128,9 +128,9 @@ class Solarsystem
     function OrderwithDate()
     {
         $query = "SELECT
-         c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,c.created,s.userid 
+         c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,c.created,s.cid,c.status 
     FROM
-        " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.id=s.userid ORDER BY c.created" . "";
+        " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.id=s.cid ORDER BY c.created" . "";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $num = $stmt->rowCount();
@@ -146,7 +146,8 @@ class Solarsystem
                     "solarp" => $solarp,
                     "panelcount" => $panelcount,
                     "created" => $created,
-                    "userid" => $userid
+                    "cid" => $cid,
+                    "status" => $status
                 );
                 array_push($solars_arr["records"], $solar_item);
             }
@@ -164,17 +165,30 @@ class Solarsystem
                <th scope=\"col\"></th>
              </tr> </thead> <tbody>";
             foreach ($solars_arr["records"] as $record) {
-                echo  "<tr>
-<th scope=\"row\">{$record['name']}</th>
-<td>{$record['phone']}</td>
+                echo  "
+<th id=\"{$record['cid']}\" scope=\"row\">{$record['name']}</th>
+<td >{$record['phone']}</td>
 <td>{$record['email']}</td>
 <td>{$record['amper']}</td>
 <td>{$record['solarp']}</td>
 <td>{$record['panelcount']}</td>
-<td>{$record['created']}</td>
-<td><button type=\"button\" class=\"btn btn-danger mb-2\" name=\"duser\" id=\"{$record['userid']}\">Sil</button></td>
-</tr>";
+<td>{$record['created']}</td>";
+echo "<form action=\"\" method=\"POST\">";
+if($record['status']==0){
+echo "<td><button type=\"submit\" class=\"btn btn-warning mb-2\" name=\"soffer\" id=\"{$record['cid']}\">İncele</button></td>";
+}
+else if($record['status']==1){
+echo "<td><button type=\"submit\" class=\"btn btn-success mb-2\" name=\"coffer\" id=\"{$record['cid']}\">Kapandı</button></td>";
+}
+else if($record['status']==2){
+echo "<td><button type=\"submit\" class=\"btn btn-info mb-2\" name=\"poffer\" id=\"{$record['cid']}\">Süreçte</button></td>";
+}
+else if($record['status']==3){
+    echo "<td><button type=\"submit\" class=\"btn btn-dark mb-2\" name=\"noffer\" id=\"{$record['cid']}\">Olumsuz</button></td>";
+    }
+echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\" id=\"{$record['cid']}\">Sil</button></td></tr>";
             }
+            echo "</form>";
             echo "</tbody>";
         } else if ($num == 0) {
             echo  "<div class=\"alert alert-warning\" role=\"alert\">
@@ -185,10 +199,11 @@ class Solarsystem
     }
     //---------------------------------------------------------------------------------------------------------------------
     function ReadDeviceDetail($name)
+
     {
         $query = "SELECT d.name,d.amount,d.watt,d.hour,d.day,d.wattrequired,d.capacity,d.amper,d.solarp,d.panelcount,c.name as cname 
         FROM
-        " . $this->table_name_d . " d," . $this->table_name_c . " c WHERE c.name like ? AND c.id=d.userid" . "";
+        " . $this->table_name_d . " d," . $this->table_name_c . " c WHERE c.name like ? AND c.id=d.cid" . "";
 
         $stmt = $this->conn->prepare($query);
         $name2 = "%$name%";
@@ -266,7 +281,7 @@ class Solarsystem
           </div>";
     }
     //---------------------------------------------------------------------------------------------------------------
-    //delete devices,customers,solars from devices inner join customers on devices.userid=customers.id inner join solars on customers.id=solars.userid where customers.name='dar';
+    //delete devices,customers,solars from devices inner join customers on devices.cid=customers.id inner join solars on customers.id=solars.cid where customers.name='dar';
     function deleteUser($name)
     {
         $query = "DELETE FROM 

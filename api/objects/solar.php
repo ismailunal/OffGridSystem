@@ -5,7 +5,7 @@ class Solar
     private $table_name = "solars";
 
     public $id;
-    public $userid;
+    public $cid;
     public $connected;
     public $watthour;
     public $wattinverted;
@@ -38,7 +38,7 @@ class Solar
     {
         $query = "INSERT INTO " . $this->table_name . "
         SET
-          userid = :userid,
+          cid = :cid,
             connected = :connected,
             watthour = :watthour,
             wattinverted = :wattinverted,
@@ -50,7 +50,7 @@ class Solar
 
         $stmt = $this->conn->prepare($query);
         // sanitize
-        $this->userid = htmlspecialchars(strip_tags($this->userid));
+        $this->cid = htmlspecialchars(strip_tags($this->cid));
         $this->connected = htmlspecialchars(strip_tags($this->connected));
         $this->watthour = htmlspecialchars(strip_tags($this->watthour));
         $this->wattinverted = htmlspecialchars(strip_tags($this->wattinverted));
@@ -61,7 +61,7 @@ class Solar
         $this->panelcount = htmlspecialchars(strip_tags($this->panelcount));
 
         // bind the values
-        $stmt->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $stmt->bindParam(':cid', $this->cid, PDO::PARAM_INT);
         $stmt->bindParam(':connected', $this->connected);
         $stmt->bindParam(':watthour', $this->watthour);
         $stmt->bindParam(':wattinverted', $this->wattinverted);
@@ -76,7 +76,7 @@ class Solar
 
         return false;
     }
-    function selectuserid()
+    function selectcustomerid()
     {
         $query = "SELECT id FROM customers ORDER BY id DESC LIMIT 1";
         $stmt = $this->conn->prepare($query);

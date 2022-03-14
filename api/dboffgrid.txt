@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
   `information` text,
 `autonomyday` int,
 `season` int,
+`status` int DEFAULT 0,
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -23,17 +24,17 @@ CREATE TABLE IF NOT EXISTS `devices` (
   `amper` decimal(13,5),
   `solarp` decimal(13,5),
   `panelcount` decimal(6,2),
-  `customerid` int NOT NULL,
+  `cid` int NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX (customerid),
-    FOREIGN KEY (customerid)
+  INDEX (cid),
+    FOREIGN KEY (cid)
         REFERENCES customers(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 ---------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `solars` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `customerid`  int NOT NULL,
+  `cid`  int NOT NULL,
   `connected` decimal,
   `watthour` decimal(13,5),
   `wattinverted` decimal(13,5),
@@ -43,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `solars` (
   `solarp` decimal(13,5),
   `panelcount` decimal(6,2),
   PRIMARY KEY (`id`),
-  INDEX (customerid),
-    FOREIGN KEY (customerid)
+  INDEX (cid),
+    FOREIGN KEY (cid)
         REFERENCES customers(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -52,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `solars` (
 CREATE TRIGGER after_customers_delete
  AFTER DELETE ON customers 
  FOR EACH ROW 
- delete from devices where devices.customerid=old.id;
+ delete from devices where devices.cid=old.id;
 
 
  ---------------------------------------ALTERNATIVE DELETE TRIGGER----------------------------------------------------------------------------------
