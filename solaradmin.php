@@ -1,8 +1,14 @@
 <?php
 include_once 'api/config/database.php';
 include_once 'api/objects/solarsystem.php';
+include_once 'api/objects/equipment.php';
 include_once 'api/config/calculator.php';
 ?>
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 
@@ -24,151 +30,154 @@ include_once 'api/config/calculator.php';
                     <form action="" method="POST">
                         <div class="input-group mb-3">
 
-                            <div>
-                                <select class="form-control" id="inputGroupSelect200" name="panels">
-                                    <option value="330">Gse 330W Monokristal Panel</option>
-                                    <option value="340">Pantec 340 W Monokristal Panel</option>
-                                    <option value="205">Pantec 205W Monokristal panel</option>
-                                    <option value="280">Pantec 280W Polikristal Panel</option>
-                                    <option value="170">Pantec 170W Polikristal Panel</option>
-                                    <option value="40">Pantec 40W Polikristal Panel</option>
-                                    <option value="20">Pantec 20W Polikristal Panel</option>
-                                </select>
-                                <select class="form-control" id="inputGroupSelect201" name="amps">
-                                    <option value="24">24 V</option>
-                                    <option value="12">12 V</option>
-                                    <option value="48">48 V</option>
-                                </select>
-                                <input type="text" class="form-control" name="inname" placeholder="İsim Giriniz" aria-label="Order by Name" aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-dark " type="submit" name="fname">Ara</button>
-                                </div>
-                            </div>
-                            <div>
-                                <select class="form-control" id="inputGroupSelect300" name="panels1">
-                                    <option value="330">Gse 330W Monokristal Panel</option>
-                                    <option value="340">Pantec 340 W Monokristal Panel</option>
-                                    <option value="205">Pantec 205W Monokristal panel</option>
-                                    <option value="280">Pantec 280W Polikristal Panel</option>
-                                    <option value="170">Pantec 170W Polikristal Panel</option>
-                                    <option value="40">Pantec 40W Polikristal Panel</option>
-                                    <option value="20">Pantec 20W Polikristal Panel</option>
-                                </select>
-                                <select class="form-control" id="inputGroupSelect301" name="amps1">
-                                    <option value="24">24 V</option>
-                                    <option value="12">12 V</option>
-                                    <option value="48">48 V</option>
-                                </select>
-                                <input type="number" class="form-control" name="inphone" placeholder="Telefon numarası giriniz" aria-label="Order by Phone" aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-info" type="submit" name="fphone">Ara</button>
-                                </div>
-                            </div>
                             <button type="submit" class="btn btn-dark mb-3" name="odate" id="date">Tarihe Göre Teklifleri Göster</button>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="inname2" placeholder="İsim Giriniz" aria-label="Order by Name" aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-info mb-3" name="fname2" id="item">İsme Göre Detaylı Eşya Dökümü Göster</button>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Panel Seçimine Göre Göster</button>
-                        </div>
-
-
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="innamedel" placeholder="İsim Giriniz" aria-label="Delete" aria-describedby="button-addon2">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-danger mb-3" name="duser">Kullanıcıyı Sil</button>
-                            </div>
+                            <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Bu buton üst buton sonucu olarak dönen liste içerisindeki bulunan butonlara özel çalışacak olup demodur.</button>
+                            <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizatları Güncelle</button>
                         </div>
                     </form>
                 </div>
             </div>
             <main class="col-12 col-md-9 col-xl-10 py-md-3 pl-md-7 bd-content" role="main">
-                <table class="table table-striped">
+           <?php if (isset($_POST['ssystem']))echo "<form action=\"offer.php\" method=\"POST\">";
+           else
+            echo "<table class=\"table table-striped\" id=\"table-content\">";
+           ?>
+                
                     <?php
                     $database = new Database();
                     $db = $database->getConnection();
                     $solarsystem = new Solarsystem($db);
-
-                    if (isset($_POST['fname'])) {
-                        $panels = $_POST['panels'];
-                        $amps = $_POST['amps'];
-                        $iname = $_POST['inname'];
-                        $solarsystem->readWithName($panels, $amps, $iname);
-                    } else if (isset($_POST['fphone'])) {
-                        $panels1 = $_POST['panels1'];
-                        $amps1 = $_POST['amps1'];
-                        $iphone = $_POST['inphone'];
-                        $solarsystem->readWithNumber($panels1, $amps1, $iphone);
-                    } else if (isset($_POST['odate'])) {
-                        $solarsystem->OrderwithDate();
-                    } else if (isset($_POST['fname2'])) {
-                        $iname2 = $_POST['inname2'];
-                        $solarsystem->ReadDeviceDetail($iname2);
-                    } else if (isset($_POST['ssystem'])) {
-                        $panels = $_POST['panels'];
-                        $solarsystem->showDetails($panels);
-                    } else if (isset($_POST['duser'])) {
-                        $iname3 = $_POST['innamedel'];
-                        $solarsystem->deleteUser($iname3);
-                    }
-                   else if(isset($_POST['doffer'])){
-                        $id= $_POST['id'];
-                       $solarsystem->delete_data_id($id);
-                    }
-
-                  
-                    if(isset($_POST['soffer'])){
-                     print_r(json_decode($_POST['data'])); 
-                        $solarsystem->ReadDeviceDetail('n');
-                    }
+                    $equipments = $solarsystem->getEquipments();
+                    $equip = new Equipment($db);
                     
-                   
-                    ?>
+                    if(isset($_POST['butid'])){
+                        echo "başarılı";
+                    }                
+                    
+                    if (isset($_POST['odate'])) {
+                        $solarsystem->OrderwithDate();
+                        echo "</table>";
+                    } else if (isset($_POST['ssystem'])) {
+                        
+                        $solarsystem->showSolarDetails(34, $equipments);
+                        echo "</table>";
+                        echo "<div id=\"contentd\">
+                        <div>
+                            <button type=\"button\" class=\"btn btn-secondary\" id=\"adddev\">EKLE</button>
+        
+                        </div>
+                        <button type=\"submit\" class=\"mt-5 btn btn-success btn-lg btn-block\">TEKLİF OLUŞTUR</button>
+                        </div> </form>";
+                        echo "</form>";
+                    } else if (isset($_POST['upequipment'])) {
+                        $eqloop = $equip->read();
+                        //                 echo "
+                        //                 <h3>Teçhizat Güncelleme</h3>
+                        // <form action=\"\" method=\"POST\" id='update_account_form'>
+                        //     <div class=\"form-group\">
+                        //         <label for=\"eqname\">İsim</label>
+                        //         <input type=\"text\" class=\"form-control\" name=\"eqname\" id=\"eqname\" required value=\"Buraya veri çekilecek\" />
+                        //     </div>
 
+                        //     <div class=\"form-group\">
+                        //         <label for=\"eqtype\">Tip</label>
+                        //         <input type=\"text\" class=\"form-control\" name=\"eqtype\" id=\"eqtype\" required value=\"Tip gelecek\" />
+                        //     </div>
+
+                        //     <div class=\"form-group\">
+                        //         <label for=\"eqbrand\">Marka</label>
+                        //         <input type=\"text\" class=\"form-control\" name=\"eqbrand\" id=\"eqbrand\" required value=\"Marka\" />     
+                        //                </div>
+
+                        //     <div class=\"form-group\">
+                        //         <label for=\"equnit\">Birim</label>
+                        //         <input type=\"text\" class=\"form-control\" name=\"equnit\" id=\"equnit\" required value=\"Birim\"/>
+                        //     </div>
+                        //     <div class=\"form-group\">
+                        //         <label for=\"equnitprice\">Birim Fiyatı</label>
+                        //         <input type=\"text\" class=\"form-control\" name=\"equnitprice\" id=\"equnitprice\" required value=\"Birim Fiyat\"/>
+                        //     </div>
+                        //     <div class=\"form-group\">
+                        //         <label for=\"eqvalue\">Değer (W/AH/V)</label>
+                        //         <input type=\"text\" class=\"form-control\" name=\"eqvalue\" id=\"eqvalue\" required value=\"Değer\"/>
+                        //     </div>
+
+                        //     <button type='submit' class='btn btn-primary'>
+                        //         Değişiklikleri Kaydet
+                        //     </button>
+                        // </form>
+                        //                 ";
+                    }
+
+
+                    ?>
                 </table>
+                </form>
             </main>
         </div>
     </div>
-<!--BUG WARNING dont use .btn-danger class for other button  -->
-    <script type = "text/javascript" language = "javascript">
-$(document).ready(function() {
-	
-	$(document).on("click", ".btn-danger", function() { 
-        var ele = $(this).parent().parent();
-		$.ajax({
-			url: "solaradmin.php",
-			type: "POST",
-			cache: false,
-			data:{
-				id: $(this).attr("id")
-			},
-			success: function(){
-                ele.fadeOut().remove();
-				
-			}
-		});
-	});
-    $(document).on("click", ".btn-warning", function() { 
-        var elname=($(this).parent().parent().children(":first").text());
-        var test=$('#22').text();
-        $.ajax({
-			url: "solaradmin.php",
-			type: "POST",
-			cache: false,
-			data:{
-				asd: test
-			},
-			success: function(){
-                    alert();
-			}
-		});
-    });
+    <script>
+        var html = `
+        <tr>
+        <td>
+        <select class="form-control" id="inputGroupSelect901" name="equipment[]">
+        <?php foreach ($equipments as $equipment) {
+            echo "<option>{$equipment['name']}</option>";
+        } ?>                              
+                  </select>
+        </td>
+        <td>
+        <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSele">Adet</label>
+                        </div>
+                        <input class="form-control" type="number" step="0.5" min="0" max="10000" title="Miktar Giriniz" placeholder="Adet" name="quantity[]" id="quantity2" />
+                    </div>
+       </td>
+        <td><input class=\"form-control\" type=\"text\"  readonly>  </td>
+     `;
+        $(document).ready(function() {
+            $("#adddev").click(function() {
+                $("#createrow").append(html);
+            });
+        });
+    </script>
+    <!--BUG WARNING dont use .btn-danger class for other button  -->
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function() {
 
-    
-});
-</script>
+            $('select').on('change', function(e) {
+                var optionSelected = $("option:selected", this);
+                var valueSelected = this.value;
+                alert(valueSelected);
+            });
+            $(document).on('click', '#update_equipment', function() {
+                showUpdateEquipment();
+            });
+            $(document).on('click', '.btn-warning', function(e) {
+               // e.preventDefault();
+                var butid = $(this).attr("id");
+                $.ajax({
+                    url: "solaradmin.php",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: {
+                        butid: butid
+                    },
+                    success: function(result) {
+                      //  event.preventDefault() ;
+                        alert('success');
+                        alert('in success callback response ='+ (result)); 
+                        alert(butid);
+
+                    },
+                    failure: function (response) { 
+            alert('in failure callback, response =', response); 
+        } 
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

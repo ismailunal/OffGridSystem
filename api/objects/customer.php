@@ -95,6 +95,34 @@ function create(){
     return false;
 }
  
+function readbyID($id){
+  
+    // select all query
+    $query = "SELECT
+                *
+            FROM
+                " . $this->table_name . " WHERE id=?" . "";
+  
+    // prepare query statement
+    $stmt = $this->conn->prepare($query);
+  
+    // execute query
+    $stmt->execute([$id]);
+    $num = $stmt->rowCount();
+    if ($num > 0) {
+        $customerarr = array("records" => array());
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+            $customer_item = array(
+                "name" => $name,
+                "phone" => $phone,
+                "email" => $email               
+            );
+            array_push($customerarr["records"], $customer_item);
+        }
+    }
+    return $customerarr;
+}
 // emailExists() method will be here
 }
 ?>

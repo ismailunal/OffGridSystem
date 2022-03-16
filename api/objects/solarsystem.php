@@ -165,17 +165,24 @@ class Solarsystem
                <th scope=\"col\"></th>
              </tr> </thead> <tbody>";
             foreach ($solars_arr["records"] as $record) {
+                echo "<form action=\"solaradmin.php\" method=\"POST\">";
                 echo  "
-<th id=\"{$record['cid']}\" scope=\"row\">{$record['name']}</th>
+<th scope=\"row\">
+<input name=\"deneme[]\" type=\"hidden\" value=\"{$record['cid']}\" >
+{$record['name']}
+</th>
 <td >{$record['phone']}</td>
 <td>{$record['email']}</td>
 <td>{$record['amper']}</td>
 <td>{$record['solarp']}</td>
 <td>{$record['panelcount']}</td>
 <td>{$record['created']}</td>";
-echo "<form action=\"\" method=\"POST\">";
 if($record['status']==0){
-echo "<td><button type=\"submit\" class=\"btn btn-warning mb-2\" name=\"soffer\" id=\"{$record['cid']}\">İncele</button></td>";
+
+echo "<td>
+<input type=\"number\" name=\"singleid\" value= \"{$record['cid']}\" hidden>
+<button type=\"submit\" class=\"btn btn-warning mb-2\" name=\"soffer\" id=\"{$record['cid']}\">İncele</button>
+</td>";
 }
 else if($record['status']==1){
 echo "<td><button type=\"submit\" class=\"btn btn-success mb-2\" name=\"coffer\" id=\"{$record['cid']}\">Kapandı</button></td>";
@@ -198,16 +205,16 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\"
         //return $stmt;
     }
     //---------------------------------------------------------------------------------------------------------------------
-    function ReadDeviceDetail($name)
+    function ReadDeviceDetail($id)
 
     {
         $query = "SELECT d.name,d.amount,d.watt,d.hour,d.day,d.wattrequired,d.capacity,d.amper,d.solarp,d.panelcount,c.name as cname 
         FROM
-        " . $this->table_name_d . " d," . $this->table_name_c . " c WHERE c.name like ? AND c.id=d.cid" . "";
+        " . $this->table_name_d . " d," . $this->table_name_c . " c WHERE c.id=? AND c.id=d.cid" . "";
 
         $stmt = $this->conn->prepare($query);
-        $name2 = "%$name%";
-        $stmt->execute([$name2]);
+        //$name2 = "%$name%";
+        $stmt->execute([$id]);
         $num = $stmt->rowCount();
         if ($num > 0) {
             $solars_arr = array("records" => array());
@@ -266,19 +273,100 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\"
             Kullanıcı Bulunamadı!
           </div>";
         }
-        //return $stmt;
+     //   return $solars_arr["records"];
     }
     //---------------------------------------------------------------------------------------------------------------
-    function showDetails($panels)
+    function showSolarDetails($id,$equipments)
     {
+        $query = "SELECT
+         c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,s.cid,c.status ,s.connected
+    FROM
+        " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.id=? AND c.id=s.cid" . "";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        $num = $stmt->rowCount();
+        if ($num > 0) {
+            $solars_arr = array("records" => array());
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                extract($row);
+                $solar_item = array(
+                    "name" => $name,
+                    "phone" => $phone,
+                    "email" => $email,
+                    "amper" => $amper,
+                    "solarp" => $solarp,
+                    "panelcount" => $panelcount,
+                    "cid" => $cid,
+                    "connected" => $connected,
+                    "status" => $status
+                );
+                array_push($solars_arr["records"], $solar_item);
+            }
+            http_response_code(200);
+            
+            echo  "
+            <thead>
+            <tr>
+               <th scope=\"col\">İsim</th>
+               <th scope=\"col\">Telefon</th>
+               <th scope=\"col\">E-posta</th>
+               <th scope=\"col\">Gerekli Amper(AH)</th>
+               <th scope=\"col\">Güneş Paneli Hesabı</th>
+               <th scope=\"col\">PanelSayısı</th>
+               <th scope=\"col\">Bağlı Güç</th>
+               <th scope=\"col\"></th>
+             </tr> </thead> <tbody>";
+            foreach ($solars_arr["records"] as $record) {
+                echo  "
+<th scope=\"row\">{$record['name']}</th>
+<td >{$record['phone']}</td>
+<td>{$record['email']}</td>
+<td>{$record['amper']}</td>
+<td>{$record['solarp']}</td>
+<td>{$record['panelcount']}</td>
+<td>{$record['connected']}</td>";
+
+echo
+
+"<table class=\"table\">
+<thead class=\"thead-dark\">
+    <tr>
+        <th scope=\"col\">Kapsam</th>
+        <th scope=\"col\">Adet</th>
+        <th scope=\"col\">Birim Fiyat</th>
+    </tr>
+</thead>
+<tbody id=\"createrow\">
+<tr>
+        <td>
+        <select class=\"form-control\" id=\"inputGroupSelect901\" name=\"equipment[]\">";                            
+                   foreach($equipments as $equipment){
+                        echo "<option>{$equipment['name']} </option>";
+                    }
+          echo  "</select>
+        </td>
+        <td>
+        <div class=\"input-group\">
+                        <div class=\"input-group-prepend\">
+                            <label class=\"input-group-text\" for=\"inputGroupSele\">Adet</label>
+                        </div>
+                        <input class=\"form-control\" type=\"number\" step=\"0.5\" min=\"0\" max=\"10000\" title=\"Miktar Giriniz\" placeholder=\"Adet\" name=\"quantity[]\" id=\"quantity2\" />
+                    </div>
+       </td>
+        <td><input class=\"form-control\" type=\"text\"  readonly></td>"
+        ;
+        
+        }} //birim fiyatını çek kısmına name price olarak girilecek
+        //return $stmt;
+    
+        
 
 
-
-
-
+else{
         echo  "<div class=\"alert alert-warning\" role=\"alert\">
            Kullanıcı Bulunamadı!
           </div>";
+}
     }
     //---------------------------------------------------------------------------------------------------------------
     //delete devices,customers,solars from devices inner join customers on devices.cid=customers.id inner join solars on customers.id=solars.cid where customers.name='dar';
@@ -310,6 +398,59 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\"
         $stmt->execute([$id]);
          http_response_code(200);
 }
+function ReadDetail($id)
+
+{
+    $query = "SELECT d.name,d.amount,d.watt,d.hour,d.day,d.wattrequired,d.capacity,d.amper,d.solarp,d.panelcount,c.name as cname 
+    FROM
+    " . $this->table_name_d . " d," . $this->table_name_c . " c WHERE c.id=? AND c.id=d.cid" . "";
+
+    $stmt = $this->conn->prepare($query);
+    //$name2 = "%$name%";
+    $stmt->execute([$id]);
+    $num = $stmt->rowCount();
+    if ($num > 0) {
+        $solars_arr = array("records" => array());
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+            $solar_item = array(
+                "name" => $name,
+                "amount" => $amount,
+                "watt" => $watt,
+                "hour" => $hour,
+                "day" => $day,
+                "wattrequired" => $wattrequired,
+                "capacity" => $capacity,
+                "amper" => $amper,
+                "solarp" => $solarp,
+                "panelcount" => $panelcount,
+                "cname" => $cname,
+            );
+            array_push($solars_arr["records"], $solar_item);
+        }
+        http_response_code(200);
+        return $solars_arr["records"];
+    }
+}
+function getEquipments(){
+    $query ="SELECT * FROM equipments" . "";
+    $stmt=$this->conn->prepare($query);
+    $stmt->execute();
+    $num = $stmt->rowCount();
+        if ($num > 0) {
+            $equipment_arr = array("records" => array());
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                extract($row);
+                $equipment_item = array(
+                    "name" => $name,
+                    "unit" => $unit,
+                    "unit_price" => $unit_price
+                );
+                array_push($equipment_arr["records"], $equipment_item);
+            }
+        }
+        return $equipment_arr['records'];
+    }
 }
 
 ?>
