@@ -14,6 +14,7 @@ class Solar
     public $amper;
     public $solarp;
     public $panelcount;
+    public $offer_price;
 
     public function __construct($db)
     {
@@ -84,5 +85,13 @@ class Solar
         $stmt->execute();
         return $stmt;
     }
+    function addPrice($price,$id){
+        $query = "UPDATE solars SET offer_price=" .$price ." WHERE cid=" . $id ."";
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt;
+    }
+
 }
 ?>

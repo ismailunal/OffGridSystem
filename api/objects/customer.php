@@ -123,6 +123,31 @@ function readbyID($id){
     }
     return $customerarr;
 }
+function updateStatus($id){
+    $query = "UPDATE customers SET status=2" ." WHERE id=" . $id ."";
+    $stmt = $this->conn->prepare($query);
+    // execute query
+    $stmt->execute();
+    return $stmt;
+}
+function readStatus($id){
+    $query = "SELECT c.status FROM customers c WHERE id=" . $id ."";
+    $stmt = $this->conn->prepare($query);
+    // execute query
+    $stmt->execute();
+    return $stmt->fetchColumn();
+}
+
+function delete_data($id){
+    $query = "DELETE FROM 
+    customers WHERE customers.id=?" . "";
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->execute([$id]);
+     
+         return $stmt;
+}
+
 // emailExists() method will be here
 }
 ?>

@@ -163,9 +163,11 @@ class Solarsystem
                <th scope=\"col\">PanelSayısı</th>
                <th scope=\"col\">Tarih</th>
                <th scope=\"col\"></th>
-             </tr> </thead> <tbody>";
+             </tr> </thead> <tbody>
+             ";
             foreach ($solars_arr["records"] as $record) {
-                echo "<form action=\"solaradmin.php\" method=\"POST\">";
+                echo "<form action=\"solaradmin.php\" method=\"POST\">
+                ";
                 echo  "
 <th scope=\"row\">
 <input name=\"deneme[]\" type=\"hidden\" value=\"{$record['cid']}\" >
@@ -181,23 +183,25 @@ if($record['status']==0){
 
 echo "<td>
 <input type=\"number\" name=\"singleid\" value= \"{$record['cid']}\" hidden>
-<button type=\"submit\" class=\"btn btn-warning mb-2\" name=\"soffer\" id=\"{$record['cid']}\">İncele</button>
+<button type=\"submit\" class=\"btn btn-warning mb-2 mainformbutton0\" name=\"ssystem\" id=\"{$record['cid']}\">İncele</button>
 </td>";
 }
 else if($record['status']==1){
-echo "<td><button type=\"submit\" class=\"btn btn-success mb-2\" name=\"coffer\" id=\"{$record['cid']}\">Kapandı</button></td>";
+echo "<td><button type=\"submit\" class=\"btn btn-success mb-2 mainformbutton1\" name=\"ssystem\" id=\"{$record['cid']}\">Kapandı</button></td>";
 }
 else if($record['status']==2){
-echo "<td><button type=\"submit\" class=\"btn btn-info mb-2\" name=\"poffer\" id=\"{$record['cid']}\">Süreçte</button></td>";
+echo "<td><button type=\"submit\" class=\"btn btn-info mb-2 mainformbutton2\" name=\"ssystem\" id=\"{$record['cid']}\">Süreçte</button></td>";
 }
 else if($record['status']==3){
-    echo "<td><button type=\"submit\" class=\"btn btn-dark mb-2\" name=\"noffer\" id=\"{$record['cid']}\">Olumsuz</button></td>";
+    echo "<td><button type=\"submit\" class=\"btn btn-dark mb-2 mainformbutton3\" name=\"ssystem\" id=\"{$record['cid']}\">Olumsuz</button></td>";
     }
-echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\" id=\"{$record['cid']}\">Sil</button></td></tr>";
+echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2 deletecustomer\" name=\"customerdeleteform\" id=\"{$record['cid']}\">Sil</button></td></tr>";
             }
-            echo "</form>";
+            echo "
+            <input type=\"hidden\" class=\"form-control\" name=\"troubleid\" id=\"generalformid\" readonly/>
+            </form>";
             echo "</tbody>";
-        } else if ($num == 0) {
+        } else if ($num == 0) { 
             echo  "<div class=\"alert alert-warning\" role=\"alert\">
             Kullanıcı Bulunamadı!
           </div>";
@@ -279,7 +283,7 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\"
     function showSolarDetails($id,$equipments)
     {
         $query = "SELECT
-         c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,s.cid,c.status ,s.connected
+         c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,s.cid,c.status ,s.connected,c.autonomyday,c.season,c.location,c.information
     FROM
         " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.id=? AND c.id=s.cid" . "";
         $stmt = $this->conn->prepare($query);
@@ -298,13 +302,18 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\"
                     "panelcount" => $panelcount,
                     "cid" => $cid,
                     "connected" => $connected,
-                    "status" => $status
+                    "status" => $status,
+                    "autonomyday" => $autonomyday,
+                    "season" => $season,
+                    "location" => $location,
+                    "information" => $information
                 );
                 array_push($solars_arr["records"], $solar_item);
             }
             http_response_code(200);
             
             echo  "
+            <table class=\"table\">
             <thead>
             <tr>
                <th scope=\"col\">İsim</th>
@@ -314,18 +323,27 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2\" name=\"doffer\"
                <th scope=\"col\">Güneş Paneli Hesabı</th>
                <th scope=\"col\">PanelSayısı</th>
                <th scope=\"col\">Bağlı Güç</th>
+               <th scope=\"col\">Gün Sayısı</th>
+               <th scope=\"col\">Sezon</th>
+               <th scope=\"col\">Konum</th>
+               <th scope=\"col\">Ek Bilgi</th>
                <th scope=\"col\"></th>
-             </tr> </thead> <tbody>";
+             </tr> </thead> <tbody> ";
             foreach ($solars_arr["records"] as $record) {
                 echo  "
-<th scope=\"row\">{$record['name']}</th>
+<th scope=\"row\"><input type=\"hidden\" name=\"customerid\" value=\"{$record['cid']}\"/>{$record['name']}</th>
 <td >{$record['phone']}</td>
 <td>{$record['email']}</td>
 <td>{$record['amper']}</td>
 <td>{$record['solarp']}</td>
 <td>{$record['panelcount']}</td>
-<td>{$record['connected']}</td>";
-
+<td>{$record['connected']}</td>
+<td>{$record['autonomyday']}</td>
+<td>{$record['season']}</td>
+<td>{$record['location']}</td>
+<td>{$record['information']}</td>";
+            }
+            echo "</tbody></table>";
 echo
 
 "<table class=\"table\">
@@ -333,15 +351,14 @@ echo
     <tr>
         <th scope=\"col\">Kapsam</th>
         <th scope=\"col\">Adet</th>
-        <th scope=\"col\">Birim Fiyat</th>
     </tr>
 </thead>
 <tbody id=\"createrow\">
 <tr>
         <td>
-        <select class=\"form-control\" id=\"inputGroupSelect901\" name=\"equipment[]\">";                            
+        <select class=\"form-control\" id=\"inputGroupSelect901\" name=\"equipmentid[]\">";                            
                    foreach($equipments as $equipment){
-                        echo "<option>{$equipment['name']} </option>";
+                        echo "<option value=\"{$equipment['id']}\">{$equipment['name']} </option>";
                     }
           echo  "</select>
         </td>
@@ -353,10 +370,10 @@ echo
                         <input class=\"form-control\" type=\"number\" step=\"0.5\" min=\"0\" max=\"10000\" title=\"Miktar Giriniz\" placeholder=\"Adet\" name=\"quantity[]\" id=\"quantity2\" />
                     </div>
        </td>
-        <td><input class=\"form-control\" type=\"text\"  readonly></td>"
+        "
         ;
         
-        }} //birim fiyatını çek kısmına name price olarak girilecek
+        } //birim fiyatını çek kısmına name price olarak girilecek
         //return $stmt;
     
         
@@ -442,6 +459,7 @@ function getEquipments(){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 extract($row);
                 $equipment_item = array(
+                    "id"=>$id,
                     "name" => $name,
                     "unit" => $unit,
                     "unit_price" => $unit_price

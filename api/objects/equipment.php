@@ -47,7 +47,7 @@ class Equipment
             http_response_code(200);
             foreach ($equipments_arr["records"] as $record) {
                 echo  "
-                <button type=\"button\" class=\"btn btn-info\" id=\"{$record['id']}\" >{$record['name']}</button>                         
+                <button type=\"button\" class=\"btn btn-info updateequipment\" id=\"{$record['id']}\" >{$record['name']}</button>                         
                 ";
             }
         } else if ($num == 0 || $num==null) {
@@ -85,18 +85,18 @@ class Equipment
         $stmt = $this->conn->prepare($query);
         // sanitize
         $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->amount = htmlspecialchars(strip_tags($this->type));
-        $this->watt = htmlspecialchars(strip_tags($this->brand));
-        $this->hour = htmlspecialchars(strip_tags($this->unit));
-        $this->day = htmlspecialchars(strip_tags($this->unit_price));
-        $this->wattrequired = htmlspecialchars(strip_tags($this->value));
+        $this->type = htmlspecialchars(strip_tags($this->type));
+        $this->brand = htmlspecialchars(strip_tags($this->brand));
+        $this->unit = htmlspecialchars(strip_tags($this->unit));
+        $this->unit_price = htmlspecialchars(strip_tags($this->unit_price));
+        $this->value = htmlspecialchars(strip_tags($this->value));
         // bind the values
         $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':amount', $this->type);
-        $stmt->bindParam(':watt', $this->brand);
-        $stmt->bindParam(':hour', $this->unit);
-        $stmt->bindParam(':day', $this->unit_price);
-        $stmt->bindParam(':wattrequired', $this->value);       
+        $stmt->bindParam(':type', $this->type);
+        $stmt->bindParam(':brand', $this->brand);
+        $stmt->bindParam(':unit', $this->unit);
+        $stmt->bindParam(':unit_price', $this->unit_price);
+        $stmt->bindParam(':value', $this->value);       
         if ($stmt->execute()) {
             return true;
         }
@@ -110,4 +110,39 @@ class Equipment
         $stmt->execute();
         return $stmt;
     }
+    function update($id){
+        $query = "UPDATE equipments " ."
+        SET 
+         name=:name,  
+         type=:type,  
+         brand=:brand,  
+         unit=:unit, 
+         unit_price=:unit_price, 
+         value=:value WHERE id=?" ."";
+
+        $stmt = $this->conn->prepare($query); 
+      
+    $this->name=htmlspecialchars(strip_tags($this->name));
+    $this->type=htmlspecialchars(strip_tags($this->type));
+    $this->brand=htmlspecialchars(strip_tags($this->brand));
+    $this->unit=htmlspecialchars(strip_tags($this->unit));
+    $this->unit_price=htmlspecialchars(strip_tags($this->unit_price));
+    $this->value=htmlspecialchars(strip_tags($this->value));
+
+    $stmt->bindParam(':name', $this->name);
+    $stmt->bindParam(':type', $this->type);
+    $stmt->bindParam(':brand', $this->brand);
+    $stmt->bindParam(':unit', $this->unit);
+    $stmt->bindParam(':unit_price', $this->unit_price);
+    $stmt->bindParam(':value', $this->value);
+  
+    echo $this->id."\n";
+ 
+    
+       if($stmt->execute([$id])){
+        return true;
+       }else{return false;}
+        
+    }
 }
+?>

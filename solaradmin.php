@@ -3,6 +3,7 @@ include_once 'api/config/database.php';
 include_once 'api/objects/solarsystem.php';
 include_once 'api/objects/equipment.php';
 include_once 'api/config/calculator.php';
+include_once 'api/objects/customer.php';
 ?>
 
 
@@ -31,86 +32,152 @@ include_once 'api/config/calculator.php';
                         <div class="input-group mb-3">
 
                             <button type="submit" class="btn btn-dark mb-3" name="odate" id="date">Tarihe Göre Teklifleri Göster</button>
-                            <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Bu buton üst buton sonucu olarak dönen liste içerisindeki bulunan butonlara özel çalışacak olup demodur.</button>
-                            <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizatları Güncelle</button>
+                            <!-- <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Bu buton üst buton sonucu olarak dönen liste içerisindeki bulunan butonlara özel çalışacak olup demodur.</button> -->
+                            <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizat Özelliklerini Güncelle</button>
+                            <button type="submit" class="btn btn-dark mb-3" name="bfrom" id="ad_equipment">Toptancıdan Alınan Ürünleri Gir</button>
+                            
                         </div>
                     </form>
                 </div>
             </div>
             <main class="col-12 col-md-9 col-xl-10 py-md-3 pl-md-7 bd-content" role="main">
-           <?php if (isset($_POST['ssystem']))echo "<form action=\"offer.php\" method=\"POST\">";
-           else
-            echo "<table class=\"table table-striped\" id=\"table-content\">";
-           ?>
-                
-                    <?php
-                    $database = new Database();
-                    $db = $database->getConnection();
-                    $solarsystem = new Solarsystem($db);
-                    $equipments = $solarsystem->getEquipments();
-                    $equip = new Equipment($db);
-                    
-                    if(isset($_POST['butid'])){
-                        echo "başarılı";
-                    }                
-                    
-                    if (isset($_POST['odate'])) {
-                        $solarsystem->OrderwithDate();
-                        echo "</table>";
-                    } else if (isset($_POST['ssystem'])) {
-                        
-                        $solarsystem->showSolarDetails(34, $equipments);
-                        echo "</table>";
-                        echo "<div id=\"contentd\">
+           
+                <?php if (isset($_POST['ssystem']))
+                    echo "<form action=\"offer.php\" method=\"POST\">";
+                else
+                    echo "
+                    <table class=\"table table-striped\" id=\"table-content-equipment\">";
+                ?>
+
+                <?php
+                $database = new Database();
+                $db = $database->getConnection();
+                $solarsystem = new Solarsystem($db);
+                $customer = new Customer($db);
+                $equipments = $solarsystem->getEquipments();
+                $equip = new Equipment($db);
+                if(isset($_POST['troubleid']))
+                $trouble_id=$_POST['troubleid'];
+                if (isset($_POST['butid'])) {
+                    echo "başarılı";
+                }
+
+                if (isset($_POST['odate'])) {
+                    $solarsystem->OrderwithDate();
+                    echo "</table>";
+                } else if (isset($_POST['ssystem'])) {
+
+                    $solarsystem->showSolarDetails($trouble_id, $equipments); //
+                    //------------------------İD DEĞİŞECEK
+                    //id değişecek
+                    echo "</table>";
+                    echo "<div id=\"contentd\">
                         <div>
                             <button type=\"button\" class=\"btn btn-secondary\" id=\"adddev\">EKLE</button>
         
-                        </div>
-                        <button type=\"submit\" class=\"mt-5 btn btn-success btn-lg btn-block\">TEKLİF OLUŞTUR</button>
-                        </div> </form>";
-                        echo "</form>";
-                    } else if (isset($_POST['upequipment'])) {
-                        $eqloop = $equip->read();
-                        //                 echo "
-                        //                 <h3>Teçhizat Güncelleme</h3>
-                        // <form action=\"\" method=\"POST\" id='update_account_form'>
-                        //     <div class=\"form-group\">
-                        //         <label for=\"eqname\">İsim</label>
-                        //         <input type=\"text\" class=\"form-control\" name=\"eqname\" id=\"eqname\" required value=\"Buraya veri çekilecek\" />
-                        //     </div>
+                        </div>";
 
-                        //     <div class=\"form-group\">
-                        //         <label for=\"eqtype\">Tip</label>
-                        //         <input type=\"text\" class=\"form-control\" name=\"eqtype\" id=\"eqtype\" required value=\"Tip gelecek\" />
-                        //     </div>
-
-                        //     <div class=\"form-group\">
-                        //         <label for=\"eqbrand\">Marka</label>
-                        //         <input type=\"text\" class=\"form-control\" name=\"eqbrand\" id=\"eqbrand\" required value=\"Marka\" />     
-                        //                </div>
-
-                        //     <div class=\"form-group\">
-                        //         <label for=\"equnit\">Birim</label>
-                        //         <input type=\"text\" class=\"form-control\" name=\"equnit\" id=\"equnit\" required value=\"Birim\"/>
-                        //     </div>
-                        //     <div class=\"form-group\">
-                        //         <label for=\"equnitprice\">Birim Fiyatı</label>
-                        //         <input type=\"text\" class=\"form-control\" name=\"equnitprice\" id=\"equnitprice\" required value=\"Birim Fiyat\"/>
-                        //     </div>
-                        //     <div class=\"form-group\">
-                        //         <label for=\"eqvalue\">Değer (W/AH/V)</label>
-                        //         <input type=\"text\" class=\"form-control\" name=\"eqvalue\" id=\"eqvalue\" required value=\"Değer\"/>
-                        //     </div>
-
-                        //     <button type='submit' class='btn btn-primary'>
-                        //         Değişiklikleri Kaydet
-                        //     </button>
-                        // </form>
-                        //                 ";
+                    if ($customer->readStatus($trouble_id) == 2) {
+                        echo "<button type=\"submit\" id=\"formbuttontooffer\" class=\"mt-5 btn btn-info btn-lg btn-block\">YENİ TEKLİF DEĞERLERİNİ GÖNDER</button>";
+                    } else if($customer->readStatus($trouble_id) == 0) {
+                        echo "<button type=\"submit\" class=\"mt-5 btn btn-warning btn-lg btn-block\">TEKLİF OLUŞTUR</button>";
                     }
+                    else if($customer->readStatus($trouble_id) == 1) {
+                        echo "<button type=\"submit\" class=\"mt-5 btn btn-success btn-lg btn-block\">BAŞARILI SONUÇLANAN TEKLİF</button>";
+                    }
+                    else if($customer->readStatus($trouble_id) == 3) {
+                        echo "<button type=\"submit\" class=\"mt-5 btn btn-danger btn-lg btn-block\">OLUMSUZ SONUÇLANAN TEKLİF</button>";
+                    }
+                    
+                    echo "
+                        </div> </form>";
+                    echo "</form>";
+                }
+                else if(isset($_POST['customerdeleteform'])){
+                    $customer->delete_data($trouble_id);
+                    
+                }
+                else if (isset($_POST['upequipment'])) {
+                    $eqloop = $equip->read();
+                    echo "<button id=\"equipmentform\"  type=\"button\" class=\"mt-5 btn btn-link btn-lg btn-block addnewequipment\">YENİ TEÇHİZAT EKLE</button>";
+                    //                 echo "
+                    //                 <h3>Teçhizat Güncelleme</h3>
+                    // <form action=\"\" method=\"POST\" id='update_account_form'>
+                    //     <div class=\"form-group\">
+                    //         <label for=\"eqname\">İsim</label>
+                    //         <input type=\"text\" class=\"form-control\" name=\"eqname\" id=\"eqname\" required value=\"Buraya veri çekilecek\" />
+                    //     </div>
+
+                    //     <div class=\"form-group\">
+                    //         <label for=\"eqtype\">Tip</label>
+                    //         <input type=\"text\" class=\"form-control\" name=\"eqtype\" id=\"eqtype\" required value=\"Tip gelecek\" />
+                    //     </div>
+
+                    //     <div class=\"form-group\">
+                    //         <label for=\"eqbrand\">Marka</label>
+                    //         <input type=\"text\" class=\"form-control\" name=\"eqbrand\" id=\"eqbrand\" required value=\"Marka\" />     
+                    //                </div>
+
+                    //     <div class=\"form-group\">
+                    //         <label for=\"equnit\">Birim</label>
+                    //         <input type=\"text\" class=\"form-control\" name=\"equnit\" id=\"equnit\" required value=\"Birim\"/>
+                    //     </div>
+                    //     <div class=\"form-group\">
+                    //         <label for=\"equnitprice\">Birim Fiyatı</label>
+                    //         <input type=\"text\" class=\"form-control\" name=\"equnitprice\" id=\"equnitprice\" required value=\"Birim Fiyat\"/>
+                    //     </div>
+                    //     <div class=\"form-group\">
+                    //         <label for=\"eqvalue\">Değer (W/AH/V)</label>
+                    //         <input type=\"text\" class=\"form-control\" name=\"eqvalue\" id=\"eqvalue\" required value=\"Değer\"/>
+                    //     </div>
+
+                    //     <button type='submit' class='btn btn-primary'>
+                    //         Değişiklikleri Kaydet
+                    //     </button>
+                    // </form>
+                    //                 ";
+                } else if (isset($_POST['bfrom'])) {
+                    echo "
+                        <form action=\"supbill.php\" method=\"POST\" id='set_sup_bill'>
+                        <div class=\"form-group col-md-6\">
+                        <h2>Satın Alma İşlemi</h2>
+                        <div class=\"input-group mb-3\">
+  <div class=\"input-group-prepend\">
+    <span class=\"input-group-text\" id=\"inputGroup-sizing-default\">Tedarikçi İsmi</span>
+  </div>
+  <input type=\"text\" class=\"form-control\" name=\"supname\" aria-label=\"Default\" aria-describedby=\"inputGroup-sizing-default\">
+</div>
+</div>
+<div class=\"form-group col-md-6\">
+                        <div class=\"input-group mb-3\">
+  <div class=\"input-group-prepend\">
+    <span class=\"input-group-text\" id=\"inputGroup-sizing-default\">Tedarikçi Telefon Numarası</span>
+  </div>
+  <input type=\"text\" class=\"form-control\" name=\"supphone\" aria-label=\"Default\" aria-describedby=\"inputGroup-sizing-default\">
+</div>
+</div>
+
+<div class=\"form-group col-md-6\">
+                        <div class=\"input-group mb-3\">
+  <div class=\"input-group-prepend\">
+    <span class=\"input-group-text\" id=\"inputGroup-sizing-default\">Fatura Miktarı</span>
+  </div>
+  <input type=\"text\" class=\"form-control\" name=\"billtotal\" aria-label=\"Default\" aria-describedby=\"inputGroup-sizing-default\">
+  <div class=\"input-group-append\">
+  <span class=\"input-group-text\">$</span>
+  </div>
+</div>
+<button type='submit' class='btn btn-primary btn-block'>
+                                  Kaydet
+                             </button>
+</div>
+
+</form>
+                        ";
+                }
 
 
-                    ?>
+                ?>
                 </table>
                 </form>
             </main>
@@ -120,9 +187,9 @@ include_once 'api/config/calculator.php';
         var html = `
         <tr>
         <td>
-        <select class="form-control" id="inputGroupSelect901" name="equipment[]">
+        <select class="form-control" id="inputGroupSelect901" name="equipmentid[]">
         <?php foreach ($equipments as $equipment) {
-            echo "<option>{$equipment['name']}</option>";
+            echo "<option value=\"{$equipment['id']}\">{$equipment['name']}</option>";
         } ?>                              
                   </select>
         </td>
@@ -134,7 +201,7 @@ include_once 'api/config/calculator.php';
                         <input class="form-control" type="number" step="0.5" min="0" max="10000" title="Miktar Giriniz" placeholder="Adet" name="quantity[]" id="quantity2" />
                     </div>
        </td>
-        <td><input class=\"form-control\" type=\"text\"  readonly>  </td>
+        
      `;
         $(document).ready(function() {
             $("#adddev").click(function() {
@@ -155,7 +222,7 @@ include_once 'api/config/calculator.php';
                 showUpdateEquipment();
             });
             $(document).on('click', '.btn-warning', function(e) {
-               // e.preventDefault();
+                // e.preventDefault();
                 var butid = $(this).attr("id");
                 $.ajax({
                     url: "solaradmin.php",
@@ -164,18 +231,112 @@ include_once 'api/config/calculator.php';
                     data: {
                         butid: butid
                     },
-                    success: function(result) {
-                      //  event.preventDefault() ;
-                        alert('success');
-                        alert('in success callback response ='+ (result)); 
-                        alert(butid);
+                    success: function() {
+   
 
                     },
-                    failure: function (response) { 
-            alert('in failure callback, response =', response); 
-        } 
+                    failure: function(response) {
+                        alert('in failure callback, response =', response);
+                    }
                 });
             });
+        });
+    </script>
+    <script>
+        var form = `           <form action="equipment.php\" method=\"POST\" id='set_equipment_values'>
+                                        <h3 id="equipmentadd">Teçhizat Ekle</h3>
+                                        
+                            <div class="form-group col-md-6">
+                            <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat İsmi</span>
+  
+                                <input type="text" class="form-control" name="eqname" id="eqname"  />
+                            </div></div>
+
+                            <div class="form-group col-md-6">
+                            <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Türü</span>
+                                <input type="text" class="form-control" name="eqtype" id="eqtype"  />
+                            </div></div>
+
+                            <div class="form-group col-md-6">
+                            <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Markası</span>
+                                <input type="text" class="form-control" name="eqbrand" id="eqbrand"  />     
+                                       </div></div>
+
+                            <div class="form-group col-md-6">
+                            <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Birimi</span>
+                                <input type="text" class="form-control" name="equnit" id="equnit"/>
+                            </div></div>
+                            <div class="form-group col-md-6">
+                            <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Birim Fiyatı</span>
+                                <input type="text" class="form-control" name="equnitprice" id="equnitprice" />
+                            </div></div>
+                            <div class="form-group col-md-6">
+                            <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Değer (W/AH/V)</span>
+                                <input type="text" class="form-control" name="eqvalue" id="eqvalue" />
+                            </div></div>
+                            <div class="form-group col-md-6">
+                            <button type='submit' class='btn btn-primary btn-block equipmentbuttons'>
+                                EKLE
+                            </button></div></form>
+                        
+                        `;
+                        var id=`
+                        <input type="hidden" class="form-control" name="sequipmentid" id="seqid" readonly/>
+                        `;
+
+
+        $(document).ready(function() {
+            $(".addnewequipment").click(function() {
+                $(".addnewequipment").hide();
+                $(".updateequipment").hide();
+                $("#table-content-equipment").before(form);
+            });
+            $(".updateequipment").click(function() {
+                $(".addnewequipment").hide();
+                $(".updateequipment").hide();
+                $("#table-content-equipment").before(form);
+                $("#set_equipment_values").prepend(id);
+                $("#seqid").val($(this).attr("id"));
+                $(".equipmentbuttons").text("GÜNCELLE");    
+                $("#equipmentadd").text($(this).text() + " Güncelle")      
+            });
+            $(".mainformbutton0").click(function() {
+                
+                    $("#generalformid").val($(this).attr("id"));
+                    $("#table-content-equipment").hide();
+                   
+                   
+            });
+            $(".mainformbutton1").click(function() {
+                  
+                $("#generalformid").val($(this).attr("id"));
+                $("#table-content-equipment").hide();
+                
+            });  
+            $(".mainformbutton2").click(function() {
+                   
+                $("#generalformid").val($(this).attr("id"));
+                $("#table-content-equipment").hide();
+                
+            });  
+            $(".mainformbutton3").click(function() {
+                   
+                $("#generalformid").val($(this).attr("id"));
+                $("#table-content-equipment").hide();
+                
+            }); 
+            $(".deletecustomer").click(function() {
+                   
+                   $("#generalformid").val($(this).attr("id"));
+                   $("#table-content-equipment").hide();
+                   
+               });               
         });
     </script>
 </body>

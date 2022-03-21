@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
 `autonomyday` int,
 `season` int,
 `status` int DEFAULT 0,
+`offer_price` decimal,
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `offer_equipments` (
   `cid` int,
   `eid` int,
   `quantity` int,
+  `name` text,
     PRIMARY KEY (`id`),
     FOREIGN KEY (cid)
         REFERENCES customers(id)
@@ -74,7 +76,29 @@ CREATE TABLE IF NOT EXISTS `equipments` (
   `value` int,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
---------------------
+---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `general` (
+  `offer_density` decimal(3,2),
+  `profit` decimal,
+  `offer_trend` varchar(8),
+  `earning_trend` varchar (8)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+-----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `suppliers` (
+   `id` int NOT NULL AUTO_INCREMENT,
+  `name` text,
+  `phone` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+-----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `bills` (
+   `id` int NOT NULL AUTO_INCREMENT,
+  `sid` int NOT NULL,
+  `created` datetime,
+  `total` decimal,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+-----------------------------------------------------------------------
 INSERT INTO equipments VALUES(2,'330W XWY GÜMÜŞ PANEL','PANEL','XWY','ADET',180,330);
 INSERT INTO equipments VALUES(3,'360W QWE ALTIN PANEL','PANEL','QWE','ADET',220,360);
 INSERT INTO equipments VALUES(4,'2.5-3 SOLAR KABLO','KABLO','REDBLACK','METRE',1.8,6);
@@ -93,6 +117,70 @@ CREATE TRIGGER after_customers_delete
  AFTER DELETE ON customers 
  FOR EACH ROW 
  delete from devices where devices.cid=old.id;
+
+ ---------------------------UPDATE GENERAL TABLE(PROFIT) WHEN UPDATE CUSTOMERS TABLE(STATUS)  
+DELIMITER $$
+CREATE TRIGGER update_general_profit
+ AFTER UPDATE ON customers 
+ FOR EACH ROW 
+ BEGIN
+ IF NEW.status=1 THEN
+ BEGIN
+ UPDATE general SET general.profit = general.profit + (SELECT offer_price from solars WHERE cid=NEW.id);
+ END;
+ END IF;
+END$$
+
+DELIMITER ;
+----------------------------DELETE GENERAL TABLE(PROFIT) WHEN UPDATE CUSTOMERS TABLE(STATUS)
+
+CREATE TRIGGER update_general_profit_delete_customer
+AFTER DELETE ON customers 
+ FOR EACH ROW 
+ UPDATE general SET general.profit = general.profit - (SELECT offer_price from solars WHERE cid=OLD.id);
+
+---------------------------------------------------UPDATE GENERAL PROFIT WHEN UPDATE CUSTOMER STATUS------------------------------------------------
+DELIMITER $$
+CREATE TRIGGER update_general_profit_status_customer
+ AFTER UPDATE ON customers 
+ FOR EACH ROW 
+ BEGIN
+ IF NEW.status!=1 THEN
+ BEGIN
+ UPDATE general SET general.profit = general.profit - (SELECT offer_price from solars WHERE cid=NEW.id);
+ END;
+ END IF;
+END$$
+
+DELIMITER ;
+ ---------------------------UPDATE GENERAL TABLE(PROFIT) WHEN INSERT BILLS TABLE 
+
+CREATE TRIGGER update_general_profit_cost
+ AFTER INSERT ON bills 
+ FOR EACH ROW 
+ UPDATE general SET general.profit = general.profit - (SELECT total from bills WHERE sid=NEW.sid);
+---------------------------UPDATE GENERAL TABLE(PROFIT) WHEN DELETE BILL
+CREATE TRIGGER update_general_profit_delete_bill
+ AFTER DELETE ON bills 
+ FOR EACH ROW 
+ UPDATE general SET general.profit = general.profit + (SELECT total from bills WHERE sid=OLD.sid);
+
+
+--------------------------UPDATE GENERAL PROFIT WHEN UPDATE BILL-------------------
+DELIMITER $$
+CREATE TRIGGER update_general_profit_update_amount
+ AFTER UPDATE ON solars 
+ FOR EACH ROW 
+ BEGIN
+ IF OLD.offer_price!=NEW.offer_price THEN
+ BEGIN
+ UPDATE general SET general.profit = general.profit - ((SELECT offer_price from solars WHERE cid=OLD.id)-(SELECT offer_price from solars WHERE cid=NEW.id));
+ END;
+ END IF;
+END$$
+
+DELIMITER ;
+
 
 
  ---------------------------------------ALTERNATIVE DELETE TRIGGER----------------------------------------------------------------------------------

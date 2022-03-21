@@ -2,22 +2,48 @@
 
 include_once 'api/config/database.php';
 include_once 'api/objects/solarsystem.php';
+include_once 'api/objects/solar.php';
+include_once 'api/objects/offer_equipment.php';
 include_once 'api/config/calculator.php';
 include_once 'api/objects/customer.php';
-$equipmentname=$_POST['equipment'];
-$equipmentquantity=$_POST['quantity'];
+
+$customerid=$_POST['customerid']; //ok
+$equipmentid=$_POST['equipmentid']; //ok
+$equipmentquantity=$_POST['quantity']; //ok
+$id=$customerid; // funny xd
 //$equipmentprice=$_POST['price'];
 
-$equipments1=array();
-array_push($equipments1,$equipmentname,$equipmentquantity);
+$equipments_posted=array();
+array_push($equipments_posted,$equipmentid,$equipmentquantity);
 
 $database = new Database();
 $db = $database->getConnection();
 $customer = new Customer($db);
+$solar = new Solar($db);
 $solarsystem = new Solarsystem($db);
-$customerarr=$customer->readbyID(35);
-$solararr = $solarsystem->ReadDetail(35);
-$equipments = $solarsystem->getEquipments();
+$offer_equipment=new OfferEquipment($db);
+$offer_equipment_read=new OfferEquipment($db);
+$offer_equipment->cid=$customerid;
+$offer_equipment->delete($customerid);
+for($i=0;$i<count($equipments_posted[0]);$i++){
+    $j=0;
+$offer_equipment->eid=$equipments_posted[$j][$i];
+$offer_equipment->quantity=$equipments_posted[$j+1][$i];
+
+//$offer_equipment->name=$equipments_posted[][];
+
+if($offer_equipment->create()){
+    http_response_code(201);
+}
+else{
+    http_response_code(400);
+    }
+}
+
+$customerarr=$customer->readbyID($id);
+$solararr = $solarsystem->ReadDetail($id);
+$offer_equipment_arr = $offer_equipment_read->ReadDetail($id);
+$customer->updateStatus($id);
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +97,7 @@ $equipments = $solarsystem->getEquipments();
                     </tr>
                     <tr>
                         <td>Teklif Veren : </td>
-                        <td>Hero Mühendislik</td>
+                        <td>Hero Mühendislik Sanayi ve Ticaret LTD. ŞTİ. </td>
                     </tr>
                     <tr>
                         <td>E-posta : </td>
@@ -79,7 +105,7 @@ $equipments = $solarsystem->getEquipments();
                     </tr>
                     <tr>
                         <td>Telefon : </td>
-                        <td>0554 370 5590-0 2660000</td>
+                        <td>0554 370 5590</td>
                     </tr>
                 </tbody>
             </table>
@@ -124,17 +150,22 @@ $equipments = $solarsystem->getEquipments();
                 <tbody>
                    
                         <?php
-
-                        for($i=0; $i<count($equipments1[0]); $i++){
-                            $j=0;
-                     echo   "<tr><td>
-                             {$equipments1[$j][$i]}
+                        //offer_equipment_arr
+                        $total_price=0;
+                        $tax=18; //select from db
+                            $dollar=16; //select from db
+                        foreach($offer_equipment_arr as $record){
+                            $total_unique_price= $record['unit_price'] * $record['quantity'];
+                            $total_price+=$total_unique_price;
+                            
+                            echo   "<tr><td>
+                             {$record['name']}
                         </td>
                         <td>
-                       {$equipments1[$j+1][$i]}
+                       {$record['quantity']}
                         </td>
-                        <td>{Birim Fiyatını Çek}</td>
-                        <td>Adet ile birim fiyatı çarp</td></tr> " ;
+                        <td>{$record['unit_price']} $</td>
+                        <td>{$total_unique_price} $</td></tr> " ;
                         }
                         ?>
                     
@@ -142,25 +173,27 @@ $equipments = $solarsystem->getEquipments();
                         <td></td>
                         <td></td>
                         <td class="text-danger">Toplam</td>
-                        <td>TOPLAM FİYATLARI TOPLA</td>
+                        <td><?php echo $total_price?> $</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="text-danger">KDV</td>
-                        <td>GENEL TABLOSUNDAN KDV DEĞERİNİ AL</td>
+                        <td><?php echo $total_price*$tax/100; ?>$</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="text-danger">Genel Toplam</td>
-                        <td>KDYE GÖRE GENEL TOPLAMI YAZ</td>
+                        <td><?php echo $total_price+($total_price*$tax/100);?> $</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="text-danger">Genel Toplam</td>
-                        <td>GENEL TOPLAMI GÜNCEL DÖVİZ KURU İLE ÇARP</td>
+                        <td><?php echo $dollar*($total_price+($total_price*$tax/100));
+                            $solar->addPrice($dollar*($total_price+($total_price*$tax/100)),35);
+                        ?> TL</td>
                     </tr>
                 </tbody>
             </table>
@@ -171,7 +204,7 @@ $equipments = $solarsystem->getEquipments();
                 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc</br>
                 dddddddddddddddddddd</br>
                 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p>
-            <a href="solaradmin.php" class="btn btn-primary"> TEKLİFİ KAYDET</a>
+
         </div>
     </div>
 </body>

@@ -1,9 +1,9 @@
 <?php
-class Equipment
+class OfferEquipment
 {
     private $conn;
-    private $table_name = "equipmnets";
-
+    private $table_name = "offer_equipments";
+    private $table_name2 = "equipments";
     public $id;
     public $cid;
     public $eid;
@@ -34,20 +34,20 @@ class Equipment
         SET
             cid = :cid,
             eid = :eid,
-            quantity = :quantity";
+            quantity = :quantity
+             ";
 
         $stmt = $this->conn->prepare($query);
         // sanitize
-        $this->name = htmlspecialchars(strip_tags($this->cid));
-        $this->amount = htmlspecialchars(strip_tags($this->eid));
-        $this->watt = htmlspecialchars(strip_tags($this->quantity));
+       $this->cid = htmlspecialchars(strip_tags($this->cid));
+       $this->eid = htmlspecialchars(strip_tags($this->eid));
+       $this->quantity = htmlspecialchars(strip_tags($this->quantity));
+      // $this->name = htmlspecialchars(strip_tags($this->name));
 
         $stmt->bindParam(':cid', $this->cid);
         $stmt->bindParam(':eid', $this->eid);
-        $stmt->bindParam(':quantity', $this->quantity);
-        $stmt->bindParam(':hour', $this->unit);
-        $stmt->bindParam(':day', $this->unit_price);
-        $stmt->bindParam(':wattrequired', $this->value);       
+        $stmt->bindParam(':quantity', $this->quantity);   
+      //  $stmt->bindParam(':name', $this->name);   
         if ($stmt->execute()) {
             return true;
         }
@@ -61,4 +61,40 @@ class Equipment
         $stmt->execute();
         return $stmt;
     }
+
+    function ReadDetail($id)
+
+{
+    $query = "SELECT e.name,e.unit_price,eo.quantity 
+    FROM
+    " . $this->table_name . " eo," . $this->table_name2 . " e WHERE eo.cid=? AND eo.eid=e.id" . "";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute([$id]);
+    $num = $stmt->rowCount();
+    if ($num > 0) {
+        $equipments_arr = array("records" => array());
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            extract($row);
+            $equipment_item = array(
+                "name" => $name,
+                "unit_price" => $unit_price,
+                "quantity" => $quantity,
+                
+            );
+            array_push($equipments_arr["records"], $equipment_item);
+        }
+        http_response_code(200);
+        return $equipments_arr["records"];
+    }
+}
+
+function delete($cid){
+    $query = "DELETE FROM 
+    offer_equipments WHERE offer_equipments.cid=?" . "";
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute([$cid]);
+         http_response_code(200);
+}
 }
