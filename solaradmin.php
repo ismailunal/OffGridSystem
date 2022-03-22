@@ -4,6 +4,7 @@ include_once 'api/objects/solarsystem.php';
 include_once 'api/objects/equipment.php';
 include_once 'api/config/calculator.php';
 include_once 'api/objects/customer.php';
+include_once 'api/objects/general.php';
 ?>
 
 
@@ -35,14 +36,19 @@ include_once 'api/objects/customer.php';
                             <!-- <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Bu buton üst buton sonucu olarak dönen liste içerisindeki bulunan butonlara özel çalışacak olup demodur.</button> -->
                             <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizat Özelliklerini Güncelle</button>
                             <button type="submit" class="btn btn-dark mb-3" name="bfrom" id="ad_equipment">Toptancıdan Alınan Ürünleri Gir</button>
-                            
+                            <div>
+                            <input type="text" class="form-control" name="updatecurrency" id="cursd" placeholder="Döviz Değerini Giriniz"/>
+                            <button type="submit" class="btn btn-dark mb-3" name="upcurrency" id="ad_cur">Döviz Fiyatını Güncelle $</button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
             <main class="col-12 col-md-9 col-xl-10 py-md-3 pl-md-7 bd-content" role="main">
            
-                <?php if (isset($_POST['ssystem']))
+                <?php 
+                
+                if (isset($_POST['ssystem']))
                     echo "<form action=\"offer.php\" method=\"POST\">";
                 else
                     echo "
@@ -56,6 +62,12 @@ include_once 'api/objects/customer.php';
                 $customer = new Customer($db);
                 $equipments = $solarsystem->getEquipments();
                 $equip = new Equipment($db);
+                $currency=new General($db);
+                if(isset($_POST['upcurrency'])){
+                    $currencyvalue=$_POST['updatecurrency'];
+                    $currency->update($currencyvalue);
+                }
+
                 if(isset($_POST['troubleid']))
                 $trouble_id=$_POST['troubleid'];
                 if (isset($_POST['butid'])) {
@@ -66,32 +78,60 @@ include_once 'api/objects/customer.php';
                     $solarsystem->OrderwithDate();
                     echo "</table>";
                 } else if (isset($_POST['ssystem'])) {
-
-                    $solarsystem->showSolarDetails($trouble_id, $equipments); //
+                    $customerstatus=$customer->readStatus($trouble_id);
+                    $solarsystem->showSolarDetails($trouble_id, $equipments,$customerstatus); //
                     //------------------------İD DEĞİŞECEK
                     //id değişecek
                     echo "</table>";
+                    if($customerstatus==0 || $customerstatus==2){
                     echo "<div id=\"contentd\">
                         <div>
                             <button type=\"button\" class=\"btn btn-secondary\" id=\"adddev\">EKLE</button>
         
                         </div>";
+                    }
 
-                    if ($customer->readStatus($trouble_id) == 2) {
+                    if ($customerstatus == 2) {
                         echo "<button type=\"submit\" id=\"formbuttontooffer\" class=\"mt-5 btn btn-info btn-lg btn-block\">YENİ TEKLİF DEĞERLERİNİ GÖNDER</button>";
-                    } else if($customer->readStatus($trouble_id) == 0) {
-                        echo "<button type=\"submit\" class=\"mt-5 btn btn-warning btn-lg btn-block\">TEKLİF OLUŞTUR</button>";
-                    }
-                    else if($customer->readStatus($trouble_id) == 1) {
-                        echo "<button type=\"submit\" class=\"mt-5 btn btn-success btn-lg btn-block\">BAŞARILI SONUÇLANAN TEKLİF</button>";
-                    }
-                    else if($customer->readStatus($trouble_id) == 3) {
-                        echo "<button type=\"submit\" class=\"mt-5 btn btn-danger btn-lg btn-block\">OLUMSUZ SONUÇLANAN TEKLİF</button>";
-                    }
-                    
-                    echo "
+                        echo "
                         </div> </form>";
+                        echo "<form action=\"offertable.php\"  method=\"POST\">
+                        <input type=\"hidden\" class=\"form-control\" name=\"showcurrent\" id=\"showid\" value=\"000\" readonly/> 
+                        <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"showid\" value=\"{$trouble_id}\" readonly/>
+                        <button type=\"submit\" class=\"mt-3 btn btn-warning btn-lg btn-block\">MEVCUT TEKLİFİ GÖRÜNTÜLE</button>";
                     echo "</form>";
+                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                    <input type=\"hidden\" class=\"form-control\" name=\"setsuccess\" id=\"showid\" value=\"111\" readonly/> 
+                        <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
+                        <button type=\"submit\" class=\"mt-3 btn btn-success btn-lg btn-block\">TEKLİFİ OLUMLU SONUÇLANDIR</button>";
+                    echo "</form>";
+                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                    <input type=\"hidden\" class=\"form-control\" name=\"setfailed\" id=\"showid\" value=\"222\" readonly/> 
+                        <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
+                        <button type=\"submit\" class=\"mt-3 btn btn-danger btn-lg btn-block\">TEKLİFİ OLUMSUZ SONUÇLANDIR</button>";
+                    echo "</form>";
+                    } else if($customerstatus == 0) {
+                        echo "<button type=\"submit\" class=\"mt-3 btn btn-warning btn-lg btn-block\">TEKLİF OLUŞTUR</button>";
+                        echo "
+                        </div> </form>";
+                    echo "</form>";               
+                    }
+                    else if($customerstatus == 1) {
+                        
+                    echo "</form>";
+                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                        <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
+                        <button type=\"submit\" class=\"mt-5 btn btn-success btn-lg btn-block\">BAŞARILI SOUNÇLANAN TEKLİF</button>";
+                    echo "</form>";
+                    }
+                    else if($customerstatus == 3) {
+                    echo "</form>";
+                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                        <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
+                        <button type=\"submit\" class=\"mt-5 btn btn-danger btn-lg btn-block\">OLUMSUZ SONUÇLANAN TEKLİF</button>";
+                    echo "</form>";
+                    }
+                   
                 }
                 else if(isset($_POST['customerdeleteform'])){
                     $customer->delete_data($trouble_id);
@@ -209,37 +249,36 @@ include_once 'api/objects/customer.php';
             });
         });
     </script>
-    <!--BUG WARNING dont use .btn-danger class for other button  -->
     <script type="text/javascript" language="javascript">
         $(document).ready(function() {
 
             $('select').on('change', function(e) {
                 var optionSelected = $("option:selected", this);
                 var valueSelected = this.value;
-                alert(valueSelected);
+                
             });
             $(document).on('click', '#update_equipment', function() {
                 showUpdateEquipment();
             });
-            $(document).on('click', '.btn-warning', function(e) {
-                // e.preventDefault();
-                var butid = $(this).attr("id");
-                $.ajax({
-                    url: "solaradmin.php",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    data: {
-                        butid: butid
-                    },
-                    success: function() {
+            // $(document).on('click', '.btn-warning', function(e) {
+            //     // e.preventDefault();
+            //     var butid = $(this).attr("id");
+            //     $.ajax({
+            //         url: "solaradmin.php",
+            //         type: "POST",
+            //         contentType: "application/json; charset=utf-8",
+            //         data: {
+            //             butid: butid
+            //         },
+            //         success: function() {
    
 
-                    },
-                    failure: function(response) {
-                        alert('in failure callback, response =', response);
-                    }
-                });
-            });
+            //         },
+            //         failure: function(response) {
+            //             alert('in failure callback, response =', response);
+            //         }
+            //     });
+            // });
         });
     </script>
     <script>
@@ -317,7 +356,8 @@ include_once 'api/objects/customer.php';
                   
                 $("#generalformid").val($(this).attr("id"));
                 $("#table-content-equipment").hide();
-                
+                $("#adddev").hide();
+                $(".closeable").hide();
             });  
             $(".mainformbutton2").click(function() {
                    
@@ -329,7 +369,8 @@ include_once 'api/objects/customer.php';
                    
                 $("#generalformid").val($(this).attr("id"));
                 $("#table-content-equipment").hide();
-                
+                $("#adddev").hide();
+                $(".closeable").hide();
             }); 
             $(".deletecustomer").click(function() {
                    

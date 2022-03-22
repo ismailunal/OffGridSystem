@@ -118,7 +118,7 @@ class Equipment
          brand=:brand,  
          unit=:unit, 
          unit_price=:unit_price, 
-         value=:value WHERE id=?" ."";
+         value=:value WHERE id=". $id ."";
 
         $stmt = $this->conn->prepare($query); 
       
@@ -135,11 +135,8 @@ class Equipment
     $stmt->bindParam(':unit', $this->unit);
     $stmt->bindParam(':unit_price', $this->unit_price);
     $stmt->bindParam(':value', $this->value);
-  
-    echo $this->id."\n";
- 
     
-       if($stmt->execute([$id])){
+       if($stmt->execute()){
         return true;
        }else{return false;}
         

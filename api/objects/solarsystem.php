@@ -280,7 +280,7 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2 deletecustomer\" 
      //   return $solars_arr["records"];
     }
     //---------------------------------------------------------------------------------------------------------------
-    function showSolarDetails($id,$equipments)
+    function showSolarDetails($id,$equipments,$status)
     {
         $query = "SELECT
          c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,s.cid,c.status ,s.connected,c.autonomyday,c.season,c.location,c.information
@@ -346,7 +346,11 @@ echo " <td><button type=\"submit\" class=\"btn btn-danger mb-2 deletecustomer\" 
             echo "</tbody></table>";
 echo
 
-"<table class=\"table\">
+"
+<p class=\"text-warning\">Not : AH ve panel sayısı varsayılan olarak 330W ve 24V üzerinden hesaplanmıştır.</p>
+";
+if($status==0 || $status==2){
+echo "<table class=\"table closeable\">
 <thead class=\"thead-dark\">
     <tr>
         <th scope=\"col\">Kapsam</th>
@@ -372,7 +376,7 @@ echo
        </td>
         "
         ;
-        
+                }
         } //birim fiyatını çek kısmına name price olarak girilecek
         //return $stmt;
     
@@ -466,8 +470,9 @@ function getEquipments(){
                 );
                 array_push($equipment_arr["records"], $equipment_item);
             }
+            return $equipment_arr['records'];
         }
-        return $equipment_arr['records'];
+        return false;
     }
 }
 

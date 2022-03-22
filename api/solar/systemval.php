@@ -1,3 +1,4 @@
+
 <?php 
 
 header("Access-Control-Allow-Origin: *");
@@ -176,15 +177,38 @@ else{
            );    
            array_push($devices_arr["records"], $device_item);
        }
+       echo "<div class=\"alert alert-success\" role=\"alert\">
+        Form Bilgileri Başarı Bir Şekilde İletildi!\nAanasayfaya Yönlendiriliyorsunuz...
+      </div>";
        http_response_code(200);
       // echo json_encode($devices_arr);
    }
      
    else{
+    echo "<div class=\"alert alert-danger\" role=\"alert\">
+    Bir Sorunla Karşılaşıldı. Lütfen daha sonra tekrar deneyiniz veya iletişime geçiniz...
+  </div>";
        http_response_code(404);
        echo json_encode(
            array("message" => "No devices found.")
        );
      }
-    // header('location: https://heromuhendislik.com/');
+    // header("refresh:3;url=https://heromuhendislik.com/");
+      header('location: https://heromuhendislik.com/');
 ?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+</body>
+
+</html>
+

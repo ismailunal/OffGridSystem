@@ -93,5 +93,17 @@ class Solar
         return $stmt;
     }
 
+    function readofferprice($id){
+        $query = "SELECT
+        offer_price
+    FROM
+        " . $this->table_name . " WHERE cid=" .$id."";
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
 }
 ?>

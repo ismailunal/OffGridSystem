@@ -6,6 +6,7 @@ include_once 'api/objects/solar.php';
 include_once 'api/objects/offer_equipment.php';
 include_once 'api/config/calculator.php';
 include_once 'api/objects/customer.php';
+include_once 'api/objects/general.php';
 
 $customerid=$_POST['customerid']; //ok
 $equipmentid=$_POST['equipmentid']; //ok
@@ -23,7 +24,14 @@ $solar = new Solar($db);
 $solarsystem = new Solarsystem($db);
 $offer_equipment=new OfferEquipment($db);
 $offer_equipment_read=new OfferEquipment($db);
+$general=new General($db);
 $offer_equipment->cid=$customerid;
+$customerstatus=$customer->readStatus($customerid);
+
+if($customerstatus==0){
+    $customerstatus=2;
+    $customer->updateStatus($customerid,$customerstatus);
+}
 $offer_equipment->delete($customerid);
 for($i=0;$i<count($equipments_posted[0]);$i++){
     $j=0;
@@ -43,7 +51,7 @@ else{
 $customerarr=$customer->readbyID($id);
 $solararr = $solarsystem->ReadDetail($id);
 $offer_equipment_arr = $offer_equipment_read->ReadDetail($id);
-$customer->updateStatus($id);
+//$customer->updateStatus($id);
 ?>
 
 <!DOCTYPE html>
@@ -60,8 +68,8 @@ $customer->updateStatus($id);
         <div class="card-header text-center text-danger">
             <img src="hero.png" width="30" height="30" class="d-inline-block align-top" alt="">
             <img src="hero.png" width="25" height="25" class="d-inline-block align-top" alt="">
-            <img src="hero.png" width="20" height="20" class="d-inline-block align-top" alt="">
-            SOLAR ENERJİ FİYAT TEKLİFİ
+           <img src="hero.png" width="20" height="20" class="d-inline-block align-top" alt="">
+            <a class="text-danger" href="solaradmin.php">SOLAR ENERJİ FİYAT TEKLİFİ</a>
             <img src="hero.png" width="20" height="20" class="d-inline-block align-top" alt="">
             <img src="hero.png" width="25" height="25" class="d-inline-block align-top" alt="">
             <img src="hero.png" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -152,8 +160,8 @@ $customer->updateStatus($id);
                         <?php
                         //offer_equipment_arr
                         $total_price=0;
-                        $tax=18; //select from db
-                            $dollar=16; //select from db
+                        $tax=$general->readtax();
+                            $dollar=$general->readcurrency();
                         foreach($offer_equipment_arr as $record){
                             $total_unique_price= $record['unit_price'] * $record['quantity'];
                             $total_price+=$total_unique_price;
@@ -192,18 +200,22 @@ $customer->updateStatus($id);
                         <td></td>
                         <td class="text-danger">Genel Toplam</td>
                         <td><?php echo $dollar*($total_price+($total_price*$tax/100));
-                            $solar->addPrice($dollar*($total_price+($total_price*$tax/100)),35);
+                            $solar->addPrice($dollar*($total_price+($total_price*$tax/100)),$customerid);
                         ?> TL</td>
                     </tr>
                 </tbody>
             </table>
 
             <h2>Teklif Koşulları</h2>
-            <p> İLK TEKLİF GELDİĞİNDE BİR ÖNCEKİ TEKLİF OLUŞTURMA SAYFASINDAN BURAYA GELİNECEK </br>
-                SÜREÇTE OLAN TEKLİF DÜZENLEME İŞLEMİ İÇİN EKİPMANLAR OTOMATİK SEÇİLEREK </br>
-                ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc</br>
-                dddddddddddddddddddd</br>
-                eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p>
+            <p>Fiyatlarımız nakit fiyattır. Ödeme yöntemleri için detay konuşulabilir. </br>
+                 Birim fiyatlara KDV dahildir. </br>
+                 Fiyatlarımız verildiği tarihten itibaren 15 gün geçerlidir.</br>
+                 Döviz olarak verilen tekliflerde ödeme, döviz cinsinden alınmaktadır. Faturanın not bölümüne, TL olarak kesilmiş olan faturanın, döviz cinsinden değeri yazılacaktır.</br>
+                Tüm sipariş, alıcı firmanın fiyat teklifine kaşe ve imza ile onay vermesiyle bir seferde alınır.</br>
+                Geciken ödemeler için aylık %8 gecikme cezası uygulama hakkımız saklıdır.</br>
+                Teklifimiz bir bütündür bölünemez. </br>
+                İhtilaf halinde Antalya mahkemeleri ve icra daireleri yetkilidir.</br>
+            </p>
 
         </div>
     </div>

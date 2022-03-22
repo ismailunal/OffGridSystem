@@ -78,11 +78,15 @@ CREATE TABLE IF NOT EXISTS `equipments` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `general` (
-  `offer_density` decimal(3,2),
-  `profit` decimal,
-  `offer_trend` varchar(8),
-  `earning_trend` varchar (8)
+  `offer_density` decimal(3,2) DEFAULT 0 NOT NULL,
+  `profit` decimal DEFAULT 0 NOT NULL,
+  `offer_trend` varchar(8) DEFAULT 'sabit' NOT NULL,
+  `earning_trend` varchar (8) DEFAULT 'sabit' NOT NULL,
+  `currency` decimal(7,3) DEFAULT 0 NOT NULL,
+  `tax` decimal(4,1) DEFAULT 0 NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+INSERT INTO GENERAL SET profit=0;
 -----------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `suppliers` (
    `id` int NOT NULL AUTO_INCREMENT,
@@ -99,26 +103,28 @@ CREATE TABLE IF NOT EXISTS `bills` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 -----------------------------------------------------------------------
-INSERT INTO equipments VALUES(2,'330W XWY GÜMÜŞ PANEL','PANEL','XWY','ADET',180,330);
-INSERT INTO equipments VALUES(3,'360W QWE ALTIN PANEL','PANEL','QWE','ADET',220,360);
-INSERT INTO equipments VALUES(4,'2.5-3 SOLAR KABLO','KABLO','REDBLACK','METRE',1.8,6);
-INSERT INTO equipments VALUES(5,'ASD AKU 150 AH JEL','AKU','ASD','ADET',400,12);
-INSERT INTO equipments VALUES(6,'DAD AKU 130 AH KATI','AKU','DAD','ADET',550,24);
-INSERT INTO equipments VALUES(7,'3000W EX INVERTER','INVERTER','EX','ADET',666,3000);
-INSERT INTO equipments VALUES(8,'5000W WER INVERETER','INVERTER','WER','ADET',750,5000);
-INSERT INTO equipments VALUES(9,'CC PARALEL KOONEKTOR','KONNEKTOR','CC','ADET',1.34,1);
-INSERT INTO equipments VALUES(10,'CC DUZ KOONEKTOR','KONNEKTOR','CC','ADET',1.12,1);
-INSERT INTO equipments VALUES(11,'AKU BAŞLIĞI','DİĞER','00','ADET',5.43,1);
-INSERT INTO equipments VALUES(12,'MUHTELİF','DİĞER','00','ADET',3,1);
-INSERT INTO equipments VALUES(13,'İŞÇİLİK VE MONTAJ','DİĞER','00','ADET',1000,1);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('330W XWY GÜMÜŞ PANEL','PANEL','XWY','ADET',180,330);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('360W QWE ALTIN PANEL','PANEL','QWE','ADET',220,360);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('2.5-3 SOLAR KABLO','KABLO','REDBLACK','METRE',1.8,6);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('ASD AKU 150 AH JEL','AKU','ASD','ADET',400,12);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('DAD AKU 130 AH KATI','AKU','DAD','ADET',550,24);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('3000W EX INVERTER','INVERTER','EX','ADET',666,3000);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('5000W WER INVERETER','INVERTER','WER','ADET',750,5000);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('CC PARALEL KOONEKTOR','KONNEKTOR','CC','ADET',1.34,1);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('CC DUZ KOONEKTOR','KONNEKTOR','CC','ADET',1.12,1);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('AKU BAŞLIĞI','DİĞER','00','ADET',5.43,1);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('MUHTELİF','DİĞER','00','ADET',3,1);
+INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('İŞÇİLİK VE MONTAJ','DİĞER','00','ADET',1000,1);
 
 ---------------------------DELETE RELATIVE DEVICES WHEN CUSTOMER IS DELETED-------------------------------------------------------------
+-----PASSED
 CREATE TRIGGER after_customers_delete
  AFTER DELETE ON customers 
  FOR EACH ROW 
  delete from devices where devices.cid=old.id;
 
  ---------------------------UPDATE GENERAL TABLE(PROFIT) WHEN UPDATE CUSTOMERS TABLE(STATUS)  
+ ----PASSED
 DELIMITER $$
 CREATE TRIGGER update_general_profit
  AFTER UPDATE ON customers 
@@ -133,13 +139,14 @@ END$$
 
 DELIMITER ;
 ----------------------------DELETE GENERAL TABLE(PROFIT) WHEN UPDATE CUSTOMERS TABLE(STATUS)
-
+---SOME TROUBLES
 CREATE TRIGGER update_general_profit_delete_customer
-AFTER DELETE ON customers 
+BEFORE DELETE ON customers 
  FOR EACH ROW 
  UPDATE general SET general.profit = general.profit - (SELECT offer_price from solars WHERE cid=OLD.id);
 
 ---------------------------------------------------UPDATE GENERAL PROFIT WHEN UPDATE CUSTOMER STATUS------------------------------------------------
+----------SOME TROUBLES
 DELIMITER $$
 CREATE TRIGGER update_general_profit_status_customer
  AFTER UPDATE ON customers 
@@ -154,32 +161,26 @@ END$$
 
 DELIMITER ;
  ---------------------------UPDATE GENERAL TABLE(PROFIT) WHEN INSERT BILLS TABLE 
-
+----------PASSED
 CREATE TRIGGER update_general_profit_cost
  AFTER INSERT ON bills 
  FOR EACH ROW 
  UPDATE general SET general.profit = general.profit - (SELECT total from bills WHERE sid=NEW.sid);
 ---------------------------UPDATE GENERAL TABLE(PROFIT) WHEN DELETE BILL
+--PASSED
 CREATE TRIGGER update_general_profit_delete_bill
- AFTER DELETE ON bills 
+ BEFORE DELETE ON bills 
  FOR EACH ROW 
  UPDATE general SET general.profit = general.profit + (SELECT total from bills WHERE sid=OLD.sid);
 
 
 --------------------------UPDATE GENERAL PROFIT WHEN UPDATE BILL-------------------
-DELIMITER $$
+--SOME TROUBLES
 CREATE TRIGGER update_general_profit_update_amount
  AFTER UPDATE ON solars 
  FOR EACH ROW 
- BEGIN
- IF OLD.offer_price!=NEW.offer_price THEN
- BEGIN
- UPDATE general SET general.profit = general.profit - ((SELECT offer_price from solars WHERE cid=OLD.id)-(SELECT offer_price from solars WHERE cid=NEW.id));
- END;
- END IF;
-END$$
+ UPDATE general SET general.profit = general.profit - ((SELECT offer_price from solars WHERE cid=OLD.cid)-(SELECT offer_price from solars WHERE cid=NEW.cid));
 
-DELIMITER ;
 
 
 

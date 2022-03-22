@@ -123,8 +123,8 @@ function readbyID($id){
     }
     return $customerarr;
 }
-function updateStatus($id){
-    $query = "UPDATE customers SET status=2" ." WHERE id=" . $id ."";
+function updateStatus($id,$status){
+    $query = "UPDATE customers SET status=".$status ." WHERE id=" . $id ."";
     $stmt = $this->conn->prepare($query);
     // execute query
     $stmt->execute();
