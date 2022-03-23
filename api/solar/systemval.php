@@ -1,8 +1,6 @@
-
 <?php 
 
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
@@ -178,7 +176,7 @@ else{
            array_push($devices_arr["records"], $device_item);
        }
        echo "<div class=\"alert alert-success\" role=\"alert\">
-        Form Bilgileri Başarı Bir Şekilde İletildi!\nAanasayfaya Yönlendiriliyorsunuz...
+        Form Bilgileri Başarı Bir Şekilde İletildi!\n Anasayfaya <a href=\"https://heromuhendislik.com/\"> yönlendiriliyorsunuz...</a>
       </div>";
        http_response_code(200);
       // echo json_encode($devices_arr);
@@ -186,16 +184,18 @@ else{
      
    else{
     echo "<div class=\"alert alert-danger\" role=\"alert\">
-    Bir Sorunla Karşılaşıldı. Lütfen daha sonra tekrar deneyiniz veya iletişime geçiniz...
+    Bir Sorunla Karşılaşıldı. Lütfen daha sonra tekrar deneyiniz veya 
+    <a href=\"https://heromuhendislik.com/iletisim/\">iletişime</a> geçiniz...
   </div>";
        http_response_code(404);
        echo json_encode(
            array("message" => "No devices found.")
        );
      }
-    // header("refresh:3;url=https://heromuhendislik.com/");
-      header('location: https://heromuhendislik.com/');
+        header("refresh:3;url=https://heromuhendislik.com/");
+    //  header('location: https://heromuhendislik.com/');
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -211,4 +211,5 @@ else{
 </body>
 
 </html>
+
 

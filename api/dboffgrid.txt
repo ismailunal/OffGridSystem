@@ -174,12 +174,12 @@ CREATE TRIGGER update_general_profit_delete_bill
  UPDATE general SET general.profit = general.profit + (SELECT total from bills WHERE sid=OLD.sid);
 
 
---------------------------UPDATE GENERAL PROFIT WHEN UPDATE BILL-------------------
+--------------------------UPDATE GENERAL PROFIT WHEN DELETE SOLARS-------------------
 --SOME TROUBLES
-CREATE TRIGGER update_general_profit_update_amount
- AFTER UPDATE ON solars 
+CREATE TRIGGER update_general_profit_delete_solar
+ BEFORE DELETE ON solars 
  FOR EACH ROW 
- UPDATE general SET general.profit = general.profit - ((SELECT offer_price from solars WHERE cid=OLD.cid)-(SELECT offer_price from solars WHERE cid=NEW.cid));
+UPDATE general SET general.profit = general.profit + (SELECT offer_price from solars WHERE cid=OLD.cid)
 
 
 

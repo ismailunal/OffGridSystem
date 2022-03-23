@@ -130,7 +130,7 @@ class Solarsystem
         $query = "SELECT
          c.name,c.phone,c.email,s.amper,s.solarp,s.panelcount,c.created,s.cid,c.status 
     FROM
-        " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.id=s.cid ORDER BY c.created" . "";
+        " . $this->table_name_s . " s," . $this->table_name_c . " c WHERE c.id=s.cid ORDER BY c.created" . " DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $num = $stmt->rowCount();

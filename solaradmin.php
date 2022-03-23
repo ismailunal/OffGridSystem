@@ -9,7 +9,9 @@ include_once 'api/objects/general.php';
 
 
 
-
+<style>
+    .right-align{ text-align: right; }
+</style>
 
 <!DOCTYPE html>
 <html>
@@ -379,6 +381,28 @@ include_once 'api/objects/general.php';
                    
                });               
         });
+
+
+        $('td').each(function(){ 
+    var idx = $(this).index();
+    $('tr').each(function(){ $(this).children('td:eq('+idx+')').addClass('right-align');})  
+ });
+//  $('td').each(function(){ 
+//     $('tr').each(function(){ 
+        
+//         })  
+//  });
+
+var fixedvalues=document.getElementsByClassName("right-align");
+for (i = 0; i < fixedvalues.length; i++) {
+  var currentValue = fixedvalues[i].innerHTML;
+  if(!isNaN(currentValue)){
+    var newValue = Number(currentValue).toFixed(2);
+  fixedvalues[i].innerHTML = newValue;
+  }
+
+}
+
     </script>
 </body>
 
