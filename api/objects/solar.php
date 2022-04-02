@@ -15,6 +15,8 @@ class Solar
     public $solarp;
     public $panelcount;
     public $offer_price;
+    public $panelwatt;
+    public $voltah;
 
     public function __construct($db)
     {
@@ -103,6 +105,73 @@ class Solar
         // execute query
         $stmt->execute();
         return $stmt->fetchColumn();
+    }
+    function readPanelCount($id){
+        $query = "SELECT
+        panelcount
+    FROM
+        " . $this->table_name . " WHERE cid=" .$id."";
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+    function readAmper($id){
+        $query = "SELECT
+        amper
+    FROM
+        " . $this->table_name . " WHERE cid=" .$id."";
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+    function readWatt($id){
+        $query = "SELECT
+        panelwatt
+    FROM
+        " . $this->table_name . " WHERE cid=" .$id."";
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+    function readVolt($id){
+        $query = "SELECT
+        voltah
+    FROM
+        " . $this->table_name . " WHERE cid=" .$id."";
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    function updateSolarValues($customerid,$panelwatt,$voltah,$panelcount,$amper){
+        $query = "UPDATE solars " ."
+        SET 
+         panelwatt=" . $panelwatt . ",voltah=" .$voltah. ",panelcount=" . $panelcount . ",amper=" . $amper . 
+        " WHERE cid=". $customerid ."";
+
+        $stmt = $this->conn->prepare($query); 
+    // $this->panelwatt=htmlspecialchars(strip_tags($this->panelwatt));
+    // $stmt->bindParam(':panelwatt', $this->panelwatt);
+    // $this->voltah=htmlspecialchars(strip_tags($this->voltah));
+    // $stmt->bindParam(':voltah', $this->voltah);
+    // $this->panelcount=htmlspecialchars(strip_tags($this->panelcount));
+    // $stmt->bindParam(':panelcount', $this->panelcount);
+    // $this->amper=htmlspecialchars(strip_tags($this->amper));
+    // $stmt->bindParam(':amper', $this->amper);
+    
+       if($stmt->execute()){
+    
+        return true;
+       }else{return false;}
+        
     }
 
 }

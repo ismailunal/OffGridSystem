@@ -103,4 +103,12 @@ class Device
         $stmt->execute();
         return $stmt;
     }
+    function updateDevices($panco,$ah,$deviceid,$id){
+        $query = "UPDATE devices " ."
+        SET 
+         panelcount=" . $panco . ",amper=" .$ah.
+        " WHERE id=". $deviceid ." AND cid=".$id."";
+
+        $stmt = $this->conn->prepare($query); 
+    }
 }

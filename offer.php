@@ -7,13 +7,21 @@ include_once 'api/objects/offer_equipment.php';
 include_once 'api/config/calculator.php';
 include_once 'api/objects/customer.php';
 include_once 'api/objects/general.php';
+include_once 'api/objects/device.php';
 
 $customerid=$_POST['customerid']; //ok
 $equipmentid=$_POST['equipmentid']; //ok
 $equipmentquantity=$_POST['quantity']; //ok
+$panelwatt=$_POST['inputForChangeWatt'];
+// if(gettype($panelwatt)==='string'){
+//     $panelwatt=(int)330;
+// }
+$voltah=$_POST['inputForChangeVolt'];
+// if(gettype($voltah)==='string'){
+//     $voltah=(int)24;
+// }
 $id=$customerid; // funny xd
 //$equipmentprice=$_POST['price'];
-
 $equipments_posted=array();
 array_push($equipments_posted,$equipmentid,$equipmentquantity);
 
@@ -25,6 +33,17 @@ $solarsystem = new Solarsystem($db);
 $offer_equipment=new OfferEquipment($db);
 $offer_equipment_read=new OfferEquipment($db);
 $general=new General($db);
+$device=new Device($db);
+$prewatt=$solar->readWatt($customerid);
+$prevolt=$solar->readVolt($customerid);
+// $solar->panelwatt=$panelwatt;
+// $solar->voltah=$voltah;
+$panelcount= $solar->readPanelCount($customerid) *$solar->readWatt($customerid) / $panelwatt;
+$amper= $solar->readAmper($customerid) * $solar->readVolt($customerid) / $voltah;
+// $solar->panelcount= $panelcount;
+// $solar->amper=  $amper;
+
+$solar->updateSolarValues($customerid,$panelwatt,$voltah,$panelcount,$amper);
 $offer_equipment->cid=$customerid;
 $customerstatus=$customer->readStatus($customerid);
 
@@ -130,14 +149,20 @@ $offer_equipment_arr = $offer_equipment_read->ReadDetail($id);
                     </tr>
                     <tr>
                         <?php
+                        $voltdev=$prevolt/$voltah;
                         foreach ($solararr as $record) {
+                             $panco=$record['panelcount']*$prewatt/$panelwatt;
+                             $amperdev=$record['amper']*$voltdev;
+                             $deviceid=$record['id'];
+                           $device->updateDevices($panco,$amperdev,$deviceid,$customerid);
+     
                             echo  "<tr>
 <td>{$record['name']}</td>          
 <td>{$record['amount']}</td>
 <td>{$record['watt']}</td>
 <td>{$record['hour']}</td>
 <td>{$record['day']}</td>
-<td>{$record['panelcount']}</td>
+<td>{$panco}</td>
 </tr>";
                         } ?>
                     </tr>

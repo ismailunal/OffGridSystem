@@ -10,7 +10,9 @@ include_once 'api/objects/general.php';
 
 
 <style>
-    .right-align{ text-align: right; }
+    .right-align {
+        text-align: right;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -36,20 +38,20 @@ include_once 'api/objects/general.php';
 
                             <button type="submit" class="btn btn-dark mb-3" name="odate" id="date">Tarihe Göre Teklifleri Göster</button>
                             <!-- <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Bu buton üst buton sonucu olarak dönen liste içerisindeki bulunan butonlara özel çalışacak olup demodur.</button> -->
-                            <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizat Özelliklerini Güncelle</button>
+                            <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizat Özelliklerini Güncelle/Ekle</button>
                             <button type="submit" class="btn btn-dark mb-3" name="bfrom" id="ad_equipment">Toptancıdan Alınan Ürünleri Gir</button>
                             <div>
-                            <input type="text" class="form-control" name="updatecurrency" id="cursd" placeholder="Döviz Değerini Giriniz"/>
-                            <button type="submit" class="btn btn-dark mb-3" name="upcurrency" id="ad_cur">Döviz Fiyatını Güncelle $</button>
+                                <input type="text" class="form-control" name="updatecurrency" id="cursd" placeholder="Döviz Değerini Giriniz" />
+                                <button type="submit" class="btn btn-dark mb-3" name="upcurrency" id="ad_cur">Döviz Fiyatını Güncelle $</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
             <main class="col-12 col-md-9 col-xl-10 py-md-3 pl-md-7 bd-content" role="main">
-           
-                <?php 
-                
+
+                <?php
+
                 if (isset($_POST['ssystem']))
                     echo "<form action=\"offer.php\" method=\"POST\">";
                 else
@@ -64,14 +66,14 @@ include_once 'api/objects/general.php';
                 $customer = new Customer($db);
                 $equipments = $solarsystem->getEquipments();
                 $equip = new Equipment($db);
-                $currency=new General($db);
-                if(isset($_POST['upcurrency'])){
-                    $currencyvalue=$_POST['updatecurrency'];
+                $currency = new General($db);
+                if (isset($_POST['upcurrency'])) {
+                    $currencyvalue = $_POST['updatecurrency'];
                     $currency->update($currencyvalue);
                 }
 
-                if(isset($_POST['troubleid']))
-                $trouble_id=$_POST['troubleid'];
+                if (isset($_POST['troubleid']))
+                    $trouble_id = $_POST['troubleid'];
                 if (isset($_POST['butid'])) {
                     echo "başarılı";
                 }
@@ -80,13 +82,13 @@ include_once 'api/objects/general.php';
                     $solarsystem->OrderwithDate();
                     echo "</table>";
                 } else if (isset($_POST['ssystem'])) {
-                    $customerstatus=$customer->readStatus($trouble_id);
-                    $solarsystem->showSolarDetails($trouble_id, $equipments,$customerstatus); //
+                    $customerstatus = $customer->readStatus($trouble_id);
+                    $solarsystem->showSolarDetails($trouble_id, $equipments, $customerstatus); //
                     //------------------------İD DEĞİŞECEK
                     //id değişecek
                     echo "</table>";
-                    if($customerstatus==0 || $customerstatus==2){
-                    echo "<div id=\"contentd\">
+                    if ($customerstatus == 0 || $customerstatus == 2) {
+                        echo "<div id=\"contentd\">
                         <div>
                             <button type=\"button\" class=\"btn btn-secondary\" id=\"adddev\">EKLE</button>
         
@@ -97,49 +99,44 @@ include_once 'api/objects/general.php';
                         echo "<button type=\"submit\" id=\"formbuttontooffer\" class=\"mt-5 btn btn-info btn-lg btn-block\">YENİ TEKLİF DEĞERLERİNİ GÖNDER</button>";
                         echo "
                         </div> </form>";
+
                         echo "<form action=\"offertable.php\"  method=\"POST\">
                         <input type=\"hidden\" class=\"form-control\" name=\"showcurrent\" id=\"showid\" value=\"000\" readonly/> 
                         <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"showid\" value=\"{$trouble_id}\" readonly/>
                         <button type=\"submit\" class=\"mt-3 btn btn-warning btn-lg btn-block\">MEVCUT TEKLİFİ GÖRÜNTÜLE</button>";
-                    echo "</form>";
-                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                        echo "</form>";
+                        echo "<form action=\"offertable.php\"  method=\"POST\"> 
                     <input type=\"hidden\" class=\"form-control\" name=\"setsuccess\" id=\"showid\" value=\"111\" readonly/> 
                         <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
                         <button type=\"submit\" class=\"mt-3 btn btn-success btn-lg btn-block\">TEKLİFİ OLUMLU SONUÇLANDIR</button>";
-                    echo "</form>";
-                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                        echo "</form>";
+                        echo "<form action=\"offertable.php\"  method=\"POST\"> 
                     <input type=\"hidden\" class=\"form-control\" name=\"setfailed\" id=\"showid\" value=\"222\" readonly/> 
                         <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
                         <button type=\"submit\" class=\"mt-3 btn btn-danger btn-lg btn-block\">TEKLİFİ OLUMSUZ SONUÇLANDIR</button>";
-                    echo "</form>";
-                    } else if($customerstatus == 0) {
+                        echo "</form>";
+                    } else if ($customerstatus == 0) {
                         echo "<button type=\"submit\" class=\"mt-3 btn btn-warning btn-lg btn-block\">TEKLİF OLUŞTUR</button>";
                         echo "
                         </div> </form>";
-                    echo "</form>";               
-                    }
-                    else if($customerstatus == 1) {
-                        
-                    echo "</form>";
-                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                        echo "</form>";
+                    } else if ($customerstatus == 1) {
+
+                        echo "</form>";
+                        echo "<form action=\"offertable.php\"  method=\"POST\"> 
                         <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
                         <button type=\"submit\" class=\"mt-5 btn btn-success btn-lg btn-block\">BAŞARILI SOUNÇLANAN TEKLİF</button>";
-                    echo "</form>";
-                    }
-                    else if($customerstatus == 3) {
-                    echo "</form>";
-                    echo "<form action=\"offertable.php\"  method=\"POST\"> 
+                        echo "</form>";
+                    } else if ($customerstatus == 3) {
+                        echo "</form>";
+                        echo "<form action=\"offertable.php\"  method=\"POST\"> 
                         <input type=\"hidden\" class=\"form-control\" name=\"offertableid\" id=\"closeid\" value=\"{$trouble_id}\" readonly/>
                         <button type=\"submit\" class=\"mt-5 btn btn-danger btn-lg btn-block\">OLUMSUZ SONUÇLANAN TEKLİF</button>";
-                    echo "</form>";
+                        echo "</form>";
                     }
-                   
-                }
-                else if(isset($_POST['customerdeleteform'])){
+                } else if (isset($_POST['customerdeleteform'])) {
                     $customer->delete_data($trouble_id);
-                    
-                }
-                else if (isset($_POST['upequipment'])) {
+                } else if (isset($_POST['upequipment'])) {
                     $eqloop = $equip->read();
                     echo "<button id=\"equipmentform\"  type=\"button\" class=\"mt-5 btn btn-link btn-lg btn-block addnewequipment\">YENİ TEÇHİZAT EKLE</button>";
                     //                 echo "
@@ -257,7 +254,7 @@ include_once 'api/objects/general.php';
             $('select').on('change', function(e) {
                 var optionSelected = $("option:selected", this);
                 var valueSelected = this.value;
-                
+
             });
             $(document).on('click', '#update_equipment', function() {
                 showUpdateEquipment();
@@ -273,7 +270,7 @@ include_once 'api/objects/general.php';
             //             butid: butid
             //         },
             //         success: function() {
-   
+
 
             //         },
             //         failure: function(response) {
@@ -327,11 +324,18 @@ include_once 'api/objects/general.php';
                             </button></div></form>
                         
                         `;
-                        var id=`
+        var id = `
                         <input type="hidden" class="form-control" name="sequipmentid" id="seqid" readonly/>
                         `;
-
-
+                        var delid = `
+                        <input type="hidden" class="form-control seqidd" name="delid" id="delid" readonly/>
+                        `;
+        var deletebtn=`
+        <form action="equipment.php" method="POST">
+        <button type='submit' name='deletebtn' id="deletebtn" class='btn btn-danger col-6 mt-4'>
+                                  Sil
+                             </button><form>
+        `; 
         $(document).ready(function() {
             $(".addnewequipment").click(function() {
                 $(".addnewequipment").hide();
@@ -344,65 +348,131 @@ include_once 'api/objects/general.php';
                 $("#table-content-equipment").before(form);
                 $("#set_equipment_values").prepend(id);
                 $("#seqid").val($(this).attr("id"));
-                $(".equipmentbuttons").text("GÜNCELLE");    
-                $("#equipmentadd").text($(this).text() + " Güncelle")      
+                $(".equipmentbuttons").text("GÜNCELLE");
+                $("#equipmentadd").text($(this).text() + " Güncelle");
+                $("#set_equipment_values").after(deletebtn);
+                $("#deletebtn").prepend(delid);
+                $("#delid").val($(this).attr("id"));
             });
             $(".mainformbutton0").click(function() {
-                
-                    $("#generalformid").val($(this).attr("id"));
-                    $("#table-content-equipment").hide();
-                   
-                   
+
+                $("#generalformid").val($(this).attr("id"));
+                $("#table-content-equipment").hide();
+
+
             });
             $(".mainformbutton1").click(function() {
-                  
+
                 $("#generalformid").val($(this).attr("id"));
                 $("#table-content-equipment").hide();
                 $("#adddev").hide();
                 $(".closeable").hide();
-            });  
+            });
             $(".mainformbutton2").click(function() {
-                   
+
                 $("#generalformid").val($(this).attr("id"));
                 $("#table-content-equipment").hide();
-                
-            });  
+
+            });
             $(".mainformbutton3").click(function() {
-                   
+
                 $("#generalformid").val($(this).attr("id"));
                 $("#table-content-equipment").hide();
                 $("#adddev").hide();
                 $(".closeable").hide();
-            }); 
+            });
             $(".deletecustomer").click(function() {
-                   
-                   $("#generalformid").val($(this).attr("id"));
-                   $("#table-content-equipment").hide();
-                   
-               });               
+
+                $("#generalformid").val($(this).attr("id"));
+                $("#table-content-equipment").hide();
+
+            });
+
+            var prewatt;
+            var defaultpnaelc=parseFloat($("#panelcountss").text());
+            $("#inputForChangeWatt").focusout(function(e) {
+                e.preventDefault();
+                if(typeof prewatt === 'undefined'){
+                    prewatt=330;
+                }
+                var watt= parseInt($("#inputForChangeWatt").val());
+                var panelcount=parseFloat($("#panelcountss").text());                
+                panelcount=panelcount*prewatt/watt;
+                if(isNaN(panelcount)){
+                    prewatt=330;
+                    $("#panelcountss").text(defaultpnaelc);
+                }
+                else{
+                    prewatt=watt;
+                $("#panelcountss").text(panelcount);
+                panelcount=defaultpnaelc;
+                }
+                //amperss
+                // $.ajax({
+                //     url:"offer.php",
+                //     method: "POST",
+                //     data :{watt : watt},
+                //    // dataType: "html",
+                //     success: function(data){
+                //         alert(data);
+                //     } 
+                // })
+            });
+
+                var prevolt;
+                var defaultah=parseFloat($("#amperss").text());
+            $("#inputForChangeVolt").focusout(function(e) {
+                e.preventDefault();
+                if(typeof prevolt === 'undefined'){
+                    prevolt=24;
+                }
+                var volt= parseInt($("#inputForChangeVolt").val());              
+                var amperah=parseFloat($("#amperss").text());                
+                amperah=amperah*prevolt/volt;
+                if(isNaN(amperah)){
+                    prevolt=24;
+                    $("#amperss").text(defaultah);
+                }
+                else{
+                    prevolt=volt;
+                $("#amperss").text(amperah);
+                amperah=defaultah;
+                }
+                //amperss
+                // $.ajax({
+                //     url:"offer.php",
+                //     method: "POST",
+                //     data :{volt : volt},
+                //    // dataType: "html",
+                //     success: function(data){
+                //         alert(data);
+                //     } 
+                // })
+            });
         });
 
 
-        $('td').each(function(){ 
-    var idx = $(this).index();
-    $('tr').each(function(){ $(this).children('td:eq('+idx+')').addClass('right-align');})  
- });
-//  $('td').each(function(){ 
-//     $('tr').each(function(){ 
-        
-//         })  
-//  });
+        $('td').each(function() {
+            var idx = $(this).index();
+            $('tr').each(function() {
+                $(this).children('td:eq(' + idx + ')').addClass('right-align');
+            })
+        });
+        //  $('td').each(function(){ 
+        //     $('tr').each(function(){ 
 
-var fixedvalues=document.getElementsByClassName("right-align");
-for (i = 0; i < fixedvalues.length; i++) {
-  var currentValue = fixedvalues[i].innerHTML;
-  if(!isNaN(currentValue)){
-    var newValue = Number(currentValue).toFixed(2);
-  fixedvalues[i].innerHTML = newValue;
-  }
+        //         })  
+        //  });
 
-}
+        var fixedvalues = document.getElementsByClassName("right-align");
+        for (i = 0; i < fixedvalues.length; i++) {
+            var currentValue = fixedvalues[i].innerHTML;
+            if (!isNaN(currentValue)) {
+                var newValue = Number(currentValue).toFixed(2);
+                fixedvalues[i].innerHTML = newValue;
+            }
 
+        }
     </script>
 </body>
 

@@ -47,7 +47,7 @@ class Equipment
             http_response_code(200);
             foreach ($equipments_arr["records"] as $record) {
                 echo  "
-                <button type=\"button\" class=\"btn btn-info updateequipment\" id=\"{$record['id']}\" >{$record['name']}</button>                         
+                <button type=\"button\" style=\"height:80px;width:200px\" class=\"btn btn-info updateequipment mt-2 ml-2\" id=\"{$record['id']}\" >{$record['name']}</button>                         
                 ";
             }
         } else if ($num == 0 || $num==null) {
@@ -140,6 +140,13 @@ class Equipment
         return true;
        }else{return false;}
         
+    }
+    function delete($id){
+        $query= "DELETE FROM equipments WHERE id=" .$id ."";    
+        $stmt = $this->conn->prepare($query);
+        // execute query
+        $stmt->execute();
+        return $stmt;
     }
 }
 ?>

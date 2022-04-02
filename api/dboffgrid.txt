@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS `solars` (
   `amper` decimal(13,5),
   `solarp` decimal(13,5),
   `panelcount` decimal(6,2),
+  `panelwatt` smallint DEFAULT 330,
+  `voltah` smallint DEFAULT 24,
   PRIMARY KEY (`id`),
   INDEX (cid),
     FOREIGN KEY (cid)
