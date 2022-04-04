@@ -90,6 +90,7 @@ if(isset($_POST['setfailed'])){
                         $total_price=0;
                         $tax=$general->readtax();
                             $dollar=$general->readcurrency();
+                            if(!is_null($offer_equipment_arr)){
                         foreach($offer_equipment_arr as $record){
                             $total_unique_price= $record['unit_price'] * $record['quantity'];
                             $total_price+=$total_unique_price;
@@ -102,7 +103,7 @@ if(isset($_POST['setfailed'])){
                         </td>
                         <td>{$record['unit_price']} $</td>
                         <td>{$total_unique_price} $</td></tr> " ;
-                        }
+                        }}
                         ?>
                     
                     <tr>

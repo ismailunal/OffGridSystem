@@ -160,9 +160,9 @@ $offer_equipment_arr = $offer_equipment_read->ReadDetail($id);
 <td>{$record['name']}</td>          
 <td>{$record['amount']}</td>
 <td>{$record['watt']}</td>
-<td>{$record['hour']}</td>
+<td>" . number_format($record['hour'],1) ."</td>
 <td>{$record['day']}</td>
-<td>{$panco}</td>
+<td>";echo number_format($panco,1); echo "</td>
 </tr>";
                         } ?>
                     </tr>
@@ -176,7 +176,7 @@ $offer_equipment_arr = $offer_equipment_read->ReadDetail($id);
                     <tr>
                         <th scope="col">Kapsam</th>
                         <th scope="col">Adet</th>
-                        <th scope="col">Birim Fiyat</th>
+                        <th id="canhide" scope="col">Birim Fiyat</th>
                         <th scope="col">Toplam Fiyat</th>
                     </tr>
                 </thead>
@@ -194,42 +194,63 @@ $offer_equipment_arr = $offer_equipment_read->ReadDetail($id);
                             echo   "<tr><td>
                              {$record['name']}
                         </td>
-                        <td>
+                        <td id=\"bbb\">
                        {$record['quantity']}
                         </td>
-                        <td>{$record['unit_price']} $</td>
-                        <td>{$total_unique_price} $</td></tr> " ;
+                        <td id=\"canhidesub\">" . number_format($record['unit_price'],1) ."$</td>
+                        <td>". number_format($total_unique_price,2) . " $</td></tr> " ;
                         }
                         ?>
                     
                     <tr>
                         <td></td>
-                        <td></td>
+                        <td>1$=<?php echo number_format($dollar,2) ?>TL</td>
                         <td class="text-danger">Toplam</td>
-                        <td><?php echo $total_price?> $</td>
+                        <td><?php echo number_format($total_price,1)?> $</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="text-danger">KDV</td>
-                        <td><?php echo $total_price*$tax/100; ?>$</td>
+                        <td><?php echo number_format(($total_price*$tax/100),1); ?>$</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="text-danger">Genel Toplam</td>
-                        <td><?php echo $total_price+($total_price*$tax/100);?> $</td>
+                        <td><?php echo number_format($total_price+($total_price*$tax/100),1);?> $</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td class="text-danger">Genel Toplam</td>
-                        <td><?php echo $dollar*($total_price+($total_price*$tax/100));
+                        <td><?php echo number_format($dollar*($total_price+($total_price*$tax/100)),2);
                             $solar->addPrice($dollar*($total_price+($total_price*$tax/100)),$customerid);
                         ?> TL</td>
                     </tr>
                 </tbody>
             </table>
+            <script>
+
+$(document).ready(function() {
+     var tmp="";
+    var fixtd=`<td id="fixtd"></td>`;
+            $("#canhide").click(function() {
+                if(tmp===""){
+                    $("#canhide").html(tmp);
+                    $("#canhidesub").hide();
+                    $("#bbb").after(fixtd);
+                    tmp="Birim Fiyat";
+                }
+                else{
+                    $("#canhide").html(tmp);
+                    $("#canhidesub").show();
+                    $('#fixtd').remove();
+                    tmp="";
+                }
+            });
+        });
+            </script>
 
             <h2>Teklif Koşulları</h2>
             <p>Fiyatlarımız nakit fiyattır. Ödeme yöntemleri için detay konuşulabilir. </br>

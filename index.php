@@ -17,7 +17,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
     <!-- Optional theme -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
-    <script>
+    <link href='https://fonts.googleapis.com/css?family=Lalezar' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Tangerine' rel='stylesheet'>
+<style>
+body {
+    font-family: 'Lalezar';font-size: 22px;
+}
+</style>
+   <script>
         // trigger when registration form is submitted
 
         // jQuery codes
@@ -34,8 +41,18 @@
             <img src="hero.png" width="30" height="30" class="d-inline-block align-top" alt="">
             Hero Mühendislik
         </a>
+
     </nav>
-    <h4 class="p-0 bg-success border" id="descr">Teklif Almak İçin Solar Enerji Sistemi Hesaplama Formunu Doldurarak Bize Gönderin</h4>
+
+    <h1 class="p-0 bg-inline-primary border" style="text-align: center;font-family:'Tangerine'" id="descr">
+    <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em">
+                        <use xlink:href="svgs/solarp.svg#Layer_1"></use>
+                    </svg>
+    Teklif Almak için Enerji Sistemi Hesaplama Formunu Doldurarak Bize Gönderin
+    <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em">
+                        <use xlink:href="svgs/solarp.svg#Layer_1"></use>
+                    </svg></h1>
+   
     <div class="container">
         <form action="api/solar/systemval.php" method="POST" id="offgridform" class="form-horizontal" role="form">
             <h3 class="p-2 bg-light border" id="products1">Beyaz Eşya</h3>
@@ -1747,8 +1764,8 @@
 
                 </div>
                 <div class="form-group col-md-6">
-                    <span class="help-block ">Biliniyorsa Google Harita Koordinatları veya Kısa Adres Bilgisi</span>
-                    <textarea class="form-control" placeholder="39.328402, 26.696481-------sokak/ilçe/il" id="exampleFormControlTextarea1" rows="3" name="coordinate"></textarea>
+                    <span class="help-block ">Google Harita Koordinatları veya Kısa Adres Bilgisi</span>
+                    <textarea class="form-control" placeholder="39.328402, 26.696481 veya Sokak/İlçe/İl şeklinde" id="exampleFormControlTextarea1" rows="3" name="coordinate"></textarea>
                 </div>
                 <div class="form-group col-md-6">
                     <span class="help-block ">Varsa diğer belirtmek istediğiniz bilgiler</span>

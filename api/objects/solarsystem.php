@@ -329,7 +329,7 @@ class Solarsystem
             foreach ($solars_arr["records"] as $record) {
                 echo  "
 <th scope=\"row\"><input type=\"hidden\" name=\"customerid\" value=\"{$record['cid']}\"/>{$record['name']}</th>
-<td >{$record['phone']}</td>
+<td id=\"phoness\">{$record['phone']}</td>
 <td>{$record['email']}</td>
 <td id=\"amperss\">{$record['amper']}</td>
 <td>{$record['solarp']}</td>
@@ -345,8 +345,8 @@ class Solarsystem
 
             "
 <p class=\"text-warning\">Not : AH ve panel sayısı varsayılan olarak
-<input name=\"inputForChangeWatt\" id=\"inputForChangeWatt\" size=\"2\" placeholder=\"330\" style=\"border: 2px solid orange;border-radius: 12px\" >W ve 
-<input name=\"inputForChangeVolt\" id=\"inputForChangeVolt\" size=\"1\" placeholder=\"24\" style=\"border: 2px solid orange;border-radius: 12px\">V üzerinden hesaplanmıştır.</p>
+<input name=\"inputForChangeWatt\" id=\"inputForChangeWatt\" size=\"2\" placeholder=\"330\" style=\"border: 2px solid orange;border-radius: 12px\" required>W ve 
+<input name=\"inputForChangeVolt\" id=\"inputForChangeVolt\" size=\"1\" placeholder=\"24\" style=\"border: 2px solid orange;border-radius: 12px\" required>V üzerinden hesaplanmıştır.</p>
 ";
             
             if ($status == 0 || $status == 2) {

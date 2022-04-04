@@ -5,6 +5,8 @@ include_once 'api/objects/equipment.php';
 include_once 'api/config/calculator.php';
 include_once 'api/objects/customer.php';
 include_once 'api/objects/general.php';
+include_once 'api/objects/supplier.php';
+include_once 'api/objects/bill.php';
 ?>
 
 
@@ -40,8 +42,9 @@ include_once 'api/objects/general.php';
                             <!-- <button type="submit" class="btn btn-dark mb-3" name="ssystem" id="system">Bu buton üst buton sonucu olarak dönen liste içerisindeki bulunan butonlara özel çalışacak olup demodur.</button> -->
                             <button type="submit" class="btn btn-dark mb-3" name="upequipment" id="update_equipment">Teçhizat Özelliklerini Güncelle/Ekle</button>
                             <button type="submit" class="btn btn-dark mb-3" name="bfrom" id="ad_equipment">Toptancıdan Alınan Ürünleri Gir</button>
+                            <button type="submit" class="btn btn-dark mb-3" name="supplierbill" id="sup_bill">Toptancı ve Fatura Bilgilerini Listele</button>
                             <div>
-                                <input type="text" class="form-control" name="updatecurrency" id="cursd" placeholder="Döviz Değerini Giriniz" />
+                                <input type="text" class="form-control" name="updatecurrency" id="cursd" placeholder="Döviz Değerini Giriniz"/>
                                 <button type="submit" class="btn btn-dark mb-3" name="upcurrency" id="ad_cur">Döviz Fiyatını Güncelle $</button>
                             </div>
                         </div>
@@ -50,6 +53,8 @@ include_once 'api/objects/general.php';
             </div>
             <main class="col-12 col-md-9 col-xl-10 py-md-3 pl-md-7 bd-content" role="main">
 
+
+            
                 <?php
 
                 if (isset($_POST['ssystem']))
@@ -67,6 +72,8 @@ include_once 'api/objects/general.php';
                 $equipments = $solarsystem->getEquipments();
                 $equip = new Equipment($db);
                 $currency = new General($db);
+                $supplier = new Supplier($db);
+                $bill=new Bill($db);
                 if (isset($_POST['upcurrency'])) {
                     $currencyvalue = $_POST['updatecurrency'];
                     $currency->update($currencyvalue);
@@ -136,9 +143,12 @@ include_once 'api/objects/general.php';
                     }
                 } else if (isset($_POST['customerdeleteform'])) {
                     $customer->delete_data($trouble_id);
-                } else if (isset($_POST['upequipment'])) {
+                } else if (isset($_POST['supplierdeleteform'])) {
+                    $supplier->delete_data($trouble_id);
+                } 
+                else if (isset($_POST['upequipment'])) {
                     $eqloop = $equip->read();
-                    echo "<button id=\"equipmentform\"  type=\"button\" class=\"mt-5 btn btn-link btn-lg btn-block addnewequipment\">YENİ TEÇHİZAT EKLE</button>";
+                    echo "<button id=\"equipmentform\"  type=\"button\" class=\"mt-5 btn btn-success btn-lg btn-block addnewequipment\">YENİ TEÇHİZAT EKLE</button>";
                     //                 echo "
                     //                 <h3>Teçhizat Güncelleme</h3>
                     // <form action=\"\" method=\"POST\" id='update_account_form'>
@@ -203,7 +213,7 @@ include_once 'api/objects/general.php';
   </div>
   <input type=\"text\" class=\"form-control\" name=\"billtotal\" aria-label=\"Default\" aria-describedby=\"inputGroup-sizing-default\">
   <div class=\"input-group-append\">
-  <span class=\"input-group-text\">$</span>
+  <span class=\"input-group-text\">TL</span>
   </div>
 </div>
 <button type='submit' class='btn btn-primary btn-block'>
@@ -214,8 +224,8 @@ include_once 'api/objects/general.php';
 </form>
                         ";
                 }
-
-
+                if(isset($_POST['supplierbill'])){
+                    $supplier->getSuplier();}
                 ?>
                 </table>
                 </form>
@@ -293,7 +303,7 @@ include_once 'api/objects/general.php';
 
                             <div class="form-group col-md-6">
                             <div class="input-group-prepend">
-    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Türü</span>
+    <span class="input-group-text" id="eqtypeeq">Teçhizat Türü</span>
                                 <input type="text" class="form-control" name="eqtype" id="eqtype"  />
                             </div></div>
 
@@ -306,7 +316,7 @@ include_once 'api/objects/general.php';
                             <div class="form-group col-md-6">
                             <div class="input-group-prepend">
     <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Birimi</span>
-                                <input type="text" class="form-control" name="equnit" id="equnit"/>
+                                <input placeholder="Adet/Kilo/Metre" type="text" class="form-control" name="equnit" id="equnit"/>
                             </div></div>
                             <div class="form-group col-md-6">
                             <div class="input-group-prepend">
@@ -315,7 +325,7 @@ include_once 'api/objects/general.php';
                             </div></div>
                             <div class="form-group col-md-6">
                             <div class="input-group-prepend">
-    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Değer (W/AH/V)</span>
+    <span class="input-group-text" id="inputGroup-sizing-default">Teçhizat Değer (Watt/AH/Volt)</span>
                                 <input type="text" class="form-control" name="eqvalue" id="eqvalue" />
                             </div></div>
                             <div class="form-group col-md-6">
@@ -340,11 +350,17 @@ include_once 'api/objects/general.php';
             $(".addnewequipment").click(function() {
                 $(".addnewequipment").hide();
                 $(".updateequipment").hide();
+                $('.eqheader').hide();
                 $("#table-content-equipment").before(form);
+                if($(this).parent().text().trim().length<50){
+                    ($("#eqtype").val($(this).parent().text().trim()));
+                };
+               
             });
             $(".updateequipment").click(function() {
                 $(".addnewequipment").hide();
                 $(".updateequipment").hide();
+                $('.eqheader').hide();
                 $("#table-content-equipment").before(form);
                 $("#set_equipment_values").prepend(id);
                 $("#seqid").val($(this).attr("id"));
@@ -387,6 +403,12 @@ include_once 'api/objects/general.php';
                 $("#table-content-equipment").hide();
 
             });
+            $(".deletesupplier").click(function() {
+
+$("#generalformid").val($(this).attr("id"));
+$("#table-content-equipment").hide();
+
+});
 
             var prewatt;
             var defaultpnaelc=parseFloat($("#panelcountss").text());
@@ -467,10 +489,10 @@ include_once 'api/objects/general.php';
         var fixedvalues = document.getElementsByClassName("right-align");
         for (i = 0; i < fixedvalues.length; i++) {
             var currentValue = fixedvalues[i].innerHTML;
-            if (!isNaN(currentValue)) {
+            if (!isNaN(currentValue) && $("#phoness").prop('id')!=='phoness') {
                 var newValue = Number(currentValue).toFixed(2);
-                fixedvalues[i].innerHTML = newValue;
-            }
+                fixedvalues[i].innerHTML = newValue;}
+            
 
         }
     </script>

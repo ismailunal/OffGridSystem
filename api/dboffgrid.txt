@@ -75,7 +75,6 @@ CREATE TABLE IF NOT EXISTS `equipments` (
   `brand` varchar (15),
   `unit` varchar (15),
   `unit_price` decimal(10,3),
-  `value` int,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 ---------------------------------------------------------------------
@@ -102,7 +101,10 @@ CREATE TABLE IF NOT EXISTS `bills` (
   `sid` int NOT NULL,
   `created` datetime,
   `total` decimal,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (sid)
+        REFERENCES suppliers(id)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 -----------------------------------------------------------------------
 INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('330W XWY GÜMÜŞ PANEL','PANEL','XWY','ADET',180,330);

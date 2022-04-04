@@ -16,14 +16,14 @@ class Equipment
     {
         $this->conn = $db;
     }
-
+    
     function read()
     {
         // select all query
         $query = "SELECT
         *
     FROM
-        " . $this->table_name . "";
+        " . $this->table_name . " ORDER BY type";
         // prepare query statement
         $stmt = $this->conn->prepare($query);
         // execute query
@@ -45,17 +45,50 @@ class Equipment
                 array_push($equipments_arr["records"], $equipment_item);
             }
             http_response_code(200);
+
+
+            $recordedType="belirlenmedi.";
             foreach ($equipments_arr["records"] as $record) {
+ 
+                if(strcmp($recordedType,$record['type'])!==0){
+                     
+                    if($record['type']==="" || $record['type']==="null"){                      
+                        echo "<div> <button type=\"button\" class=\"btn btn-warning btn-block eqheader\" disabled>
+                        Belirsiz Kategori
+                  
+                        <svg class=\"bi text-muted flex-shrink-0 me-3 addnewequipment\" width=\"1.75em\" height=\"1.75em\">
+                        <use xlink:href=\"../svgs/plus.svg#Layer_1\"></use>
+                    </svg>
+                     
+                    </button> </div>";
+       
+                    }
+                    else{
+                        //$typeCount= getCount($record['type']);
+                       echo "<div><button type=\"button\" id=\"\" class=\"btn btn-warning btn-block eqheader\" disabled>
+                       {$record['type']}
+                       <svg class=\"bi text-muted flex-shrink-0 me-3 addnewequipment\" width=\"1.75em\" height=\"1.75em\">
+                        <use xlink:href=\"../svgs/plus.svg#Layer_1\"></use>
+                    </svg>
+                   </button></div>";
+ 
+                    }
+                }                
                 echo  "
-                <button type=\"button\" style=\"height:80px;width:200px\" class=\"btn btn-info updateequipment mt-2 ml-2\" id=\"{$record['id']}\" >{$record['name']}</button>                         
+                <button type=\"button\" style=\"height:100px;width:200px\" class=\"btn btn-info updateequipment mb-4 mt-2 ml-2\" id=\"{$record['id']}\" >
+                {$record['name']} <br>";
+                echo number_format($record['unit_price'],1); 
+                echo "$</button>                         
                 ";
+                $recordedType=$record['type'];
+     
             }
         } else if ($num == 0 || $num==null) {
             echo  "<div class=\"alert alert-warning\" role=\"alert\">
             Bir Sorun Oluştu Bulunamadı!
           </div>";
         }
-    
+     //TYPE I ÇEK VE READ İ TYPE A GÖRE SIRALA. GÖRSELLERDE KATEGORİ İSMİ DEĞİŞTİĞİ AN BAŞLIK OLARAK YAZ
 
     }
     function readByName($name){
@@ -149,4 +182,3 @@ class Equipment
         return $stmt;
     }
 }
-?>
