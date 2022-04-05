@@ -107,6 +107,11 @@ CREATE TABLE IF NOT EXISTS `bills` (
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 -----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `users` (
+  `name` text,
+  `password` text
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+------------------------------------------------------------------------
 INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('330W XWY GÜMÜŞ PANEL','PANEL','XWY','ADET',180,330);
 INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('360W QWE ALTIN PANEL','PANEL','QWE','ADET',220,360);
 INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('2.5-3 SOLAR KABLO','KABLO','REDBLACK','METRE',1.8,6);

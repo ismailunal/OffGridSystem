@@ -7,6 +7,12 @@ include_once 'api/objects/customer.php';
 include_once 'api/objects/general.php';
 include_once 'api/objects/supplier.php';
 include_once 'api/objects/bill.php';
+session_start();
+$_SESSION['jwt']=htmlspecialchars($_COOKIE["jwt"]);
+$jwt=isset($_SESSION['jwt']) ? $_SESSION['jwt'] : "";
+if(!$jwt){
+    header("refresh:0;url=http://localhost:8000/login.php");
+}
 ?>
 
 
