@@ -18,7 +18,7 @@ $panelwatt=$_POST['inputForChangeWatt'];
 // }
 $voltah=$_POST['inputForChangeVolt'];
 // if(gettype($voltah)==='string'){
-//     $voltah=(int)24;
+//     $voltah=(int)12;
 // }
 $id=$customerid; // funny xd
 //$equipmentprice=$_POST['price'];

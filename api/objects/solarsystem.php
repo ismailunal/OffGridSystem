@@ -29,7 +29,7 @@ class Solarsystem
                     "phone" => $phone,
                     "email" => $email,
                     "connected" => $connected,
-                    "amper" => $amper * (24 / $amp),
+                    "amper" => $amper * (12 / $amp),
                     "solarp" => $solarp,
                     "panelcount" => $panelcount * (330 / $panel)
                 );
@@ -86,7 +86,7 @@ class Solarsystem
                     "phone" => $phone,
                     "email" => $email,
                     "connected" => $connected,
-                    "amper" => $amper * (24 / $amp),
+                    "amper" => $amper * (12 / $amp),
                     "solarp" => $solarp,
                     "panelcount" => $panelcount * (330 / $panel)
                 );
@@ -346,7 +346,7 @@ class Solarsystem
             "
 <p class=\"text-warning\">Not : AH ve panel sayısı varsayılan olarak
 <input name=\"inputForChangeWatt\" id=\"inputForChangeWatt\" size=\"2\" placeholder=\"330\" style=\"border: 2px solid orange;border-radius: 12px\" required>W ve 
-<input name=\"inputForChangeVolt\" id=\"inputForChangeVolt\" size=\"1\" placeholder=\"24\" style=\"border: 2px solid orange;border-radius: 12px\" required>V üzerinden hesaplanmıştır.</p>
+<input name=\"inputForChangeVolt\" id=\"inputForChangeVolt\" size=\"1\" placeholder=\"12\" style=\"border: 2px solid orange;border-radius: 12px\" required>V üzerinden hesaplanmıştır.</p>
 ";
             
             if ($status == 0 || $status == 2) {

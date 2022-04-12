@@ -88,15 +88,18 @@ for($i=0;$i<count($devices[0]);$i++){
     $requiredparam=Calculator::cal_requiredtotalwatt($invertedparam,$customer->autonomyday);
     $device->wattrequired=$requiredparam;
     $solar->wattrequired+=$requiredparam;
-    $capacityparam=$requiredparam/0.6;
+    $capacityparam=$requiredparam/12;          //12 ile bölündü 12 ve 48 ihtimalleri var
     $device->capacity=$capacityparam;
     $solar->capacity+=$capacityparam;
-    $amperparam=$capacityparam/24;       //24 ile bölündü 12 ve 48 ihtimalleri var
+    $amperparam=$capacityparam*0.3+$capacityparam;      
     $device->amper=$amperparam;
     $solar->amper+=$amperparam;
-    $device->solarp=$invertedparam/5/0.7;
-    $solar->solarp+=$invertedparam/5/0.7;
-    $countparam=$capacityparam/(5*330); //içerideki 330 değeri deşiştirilebilir olmalı
+
+    $tmppow=$invertedparam/(5*0.55);
+    $device->solarp=$tmppow;
+    $solar->solarp+=$tmppow;
+    
+    $countparam=$invertedparam/(5*0.55*330); //içerideki 330 değeri deşiştirilebilir olmalı
     $device->panelcount=$countparam;
     $solar->panelcount+=$countparam;
 if($device->create()){
