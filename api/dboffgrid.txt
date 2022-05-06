@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS `customers` (
 `autonomyday` int,
 `season` int,
 `status` int DEFAULT 0,
-`offer_price` decimal,
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -46,12 +45,25 @@ CREATE TABLE IF NOT EXISTS `solars` (
   `panelcount` decimal(6,2),
   `panelwatt` smallint DEFAULT 330,
   `voltah` smallint DEFAULT 12,
+  `offer_price` decimal,
   PRIMARY KEY (`id`),
   INDEX (cid),
     FOREIGN KEY (cid)
         REFERENCES customers(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `equipments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50),
+  `type` varchar (20),
+  `brand` varchar (15),
+  `unit` varchar (15),
+  `unit_price` decimal(10,3),
+  `value` decimal(10,3),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
 ---------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `offer_equipments` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -60,6 +72,8 @@ CREATE TABLE IF NOT EXISTS `offer_equipments` (
   `quantity` int,
   `name` text,
     PRIMARY KEY (`id`),
+    INDEX(cid),
+    INDEX(eid),
     FOREIGN KEY (cid)
         REFERENCES customers(id)
         ON DELETE CASCADE,
@@ -68,16 +82,7 @@ CREATE TABLE IF NOT EXISTS `offer_equipments` (
         ON DELETE CASCADE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 -----------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `equipments` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50),
-  `type` varchar (20),
-  `brand` varchar (15),
-  `unit` varchar (15),
-  `unit_price` decimal(10,3),
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
----------------------------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `general` (
   `offer_density` decimal(3,2) DEFAULT 0 NOT NULL,
   `profit` decimal DEFAULT 0 NOT NULL,
@@ -111,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` text,
   `password` text
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+INSERT INTO users VALUES('deneme','deneme');
 ------------------------------------------------------------------------
 INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('330W XWY GÜMÜŞ PANEL','PANEL','XWY','ADET',180,330);
 INSERT INTO equipments(name,type,brand,unit,unit_price,value) VALUES('360W QWE ALTIN PANEL','PANEL','QWE','ADET',220,360);
